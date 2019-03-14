@@ -59,7 +59,7 @@ if __name__ == '__main__':
         ret_val, image = cap.read()
         if not ret_val:
             break
-        if (frame_no > args.start_frame):
+        if frame_no > args.start_frame:
             # humans = e.inference(image)
             humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio)
             print(humans)
