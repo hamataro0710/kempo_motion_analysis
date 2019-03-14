@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from tf-pose-estimation.tf_pose import common
+from tf_pose import common
 # from tf-pose-estimation.tf_pose.common import CocoPart
 
 

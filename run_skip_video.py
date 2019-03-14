@@ -6,8 +6,8 @@ import cv2
 import numpy as np
 import subprocess
 
-from tf-pose-estimation.tf_pose.estimator import TfPoseEstimator
-from tf-pose-estimation.tf_pose.networks import get_graph_path, model_wh
+from tf_pose.estimator import TfPoseEstimator
+from tf_pose.networks import get_graph_path, model_wh
 import matplotlib.pyplot as plt
 
 logger = logging.getLogger('TfPoseEstimator-Video')

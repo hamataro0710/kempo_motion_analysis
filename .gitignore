@@ -1,3 +1,10 @@
 .idea*
 notebook*
-tf_pose_estimation
+./tf_pose/*
+./docker/*
+./etcs/*
+./images/*
+./launch/*
+./modules/*
+./msg/*
+./scripts/*
