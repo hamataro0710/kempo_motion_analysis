@@ -2,7 +2,8 @@
 apt-get install swig
 apt-get install ffmpeg
 cd kempo-motion-analysis/
-cd tf-pose-estimation
+mv tf-pose-estimation tf_pose_estimation
+cd tf_pose_estimation
 pip install -r requirements.txt
 bash ./models/graph/cmu/download.sh
 cd tf_pose/pafprocess/
