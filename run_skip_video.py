@@ -49,7 +49,9 @@ if __name__ == '__main__':
     path_movie_out = os.path.join(args.path, 'movie_estimated')
     path_csv_estimated = os.path.join(args.path, 'data_estimated')
     path_png_estimated = os.path.join(args.path, 'png_estimated')
+    os.makedirs(path_movie_out, exist_ok=True)
     os.makedirs(path_png_estimated, exist_ok=True)
+    os.makedirs(path_csv_estimated, exist_ok=True)
 
     w, h = model_wh(args.resolution)
     e = TfPoseEstimator(get_graph_path(args.model), target_size=(w, h))
