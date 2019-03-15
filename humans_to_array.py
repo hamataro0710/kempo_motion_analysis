@@ -25,7 +25,7 @@ def humans_to_array(humans):
     return np.array(array_humans)
 
 
-def calc_cog(segments, rates=[]):
+def calc_cog(segments, rates):
     """
     :param segments:
     :param rates:
@@ -35,7 +35,8 @@ def calc_cog(segments, rates=[]):
     rates = np.array(rates)
     if type(segments) is list:
         segments = np.array(segments)
-    rates = [rates[num] if segments[num,2]>0 else 0 for num in range(len(rates))]
+    rates = [rates[num] if segments[num, 2] > 0 else 0 for num in range(len(rates))]
+    rates = rates[~np.isnan(segments[:, 2])]
     seg_cog = (np.dot(rates, segments[:, :2])) / sum(rates)
     # print('cog_vals: ',seg_cog, '\nmean: ',np.mean(segments[:, 2]))
     seg_cog = np.append(seg_cog, np.mean(segments[:, 2]))
@@ -44,10 +45,10 @@ def calc_cog(segments, rates=[]):
 
 def segment_cog(a_human):
     head_cog = calc_cog(a_human[14:18], [1, 1, 1, 1])
-    if a_human[1,2] != 0:
+    if a_human[1, 2] != 0:
         neck_cog = a_human[1]
     else:
-        neck_cog = calc_cog(np.vstack((a_human[2],a_human[5])), [1, 1])
+        neck_cog = calc_cog(np.vstack((a_human[2], a_human[5])), [1, 1])
     hip_cog = calc_cog(np.vstack((a_human[8], a_human[11])), [1, 1])
     torso_cog = calc_cog(np.vstack((neck_cog, hip_cog)), [1, 1])
     r_thigh_cog = calc_cog(np.vstack((a_human[8], a_human[9])), [52.5, 47.5])
