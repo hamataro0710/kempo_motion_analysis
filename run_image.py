@@ -37,6 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('--plt_network', type=bool, default=False)
     parser.add_argument('--path', type=str, default="")
     parser.add_argument('--cog', type=bool, default=False)
+    parser.add_argument('--cog_color', type=str, default='black')
     args = parser.parse_args()
 
     w, h = model_wh(args.resize)
@@ -73,7 +74,7 @@ if __name__ == '__main__':
         if args.cog:
             bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, 14, 1])]
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:,:,1])]
-            plt.scatter(bodies_cog[:, 0] * w_pxl, bodies_cog[:, 1] * h_pxl, color='black', marker='o', s=5)
+            plt.scatter(bodies_cog[:, 0] * w_pxl, bodies_cog[:, 1] * h_pxl, color=args.cog_color, marker='o', s=5)
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
         plt.savefig(os.path.join(path_out,
