@@ -40,10 +40,10 @@ class MotionAnalysis():
                             + self.arm_weight + self.forearm_weight + self.hand_weight) * 2\
                             - self.pelvis_weight - self.head_weight
         # self.torso_weight = (-10.1647 + 18.7503 * self.torso_length + 0.48275 * self.weight) * 0.43/0.54
-        self.weights = [self.head_weight, self.torso_weight,
+        self.weights = np.array([self.head_weight, self.torso_weight,
                             self.thigh_weight, self.thigh_weight, self.leg_weight, self.leg_weight,
                             self.foot_weight, self.foot_weight, self.arm_weight, self.arm_weight,
-                            self.forearm_weight, self.forearm_weight, self.hand_weight, self.hand_weight,]
+                            self.forearm_weight, self.forearm_weight, self.hand_weight, self.hand_weight,])
     #     # estimation of inertia of body segments
     #     foot_inertia = np.zeros(3, 3)
     #     foot_inertia[1, 1] = (-38.9258 + 214.578*self.foot_length + 0.01445*self.weight)/10000
