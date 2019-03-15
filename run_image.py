@@ -70,6 +70,7 @@ if __name__ == '__main__':
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         if args.cog:
             logger.debug('bodies cog\n' + str(bodies_cog))
+            bodies_cog = bodies_cog[~np.isnan(bodies_cog[:,:,1])]
             plt.plot(np.isfinite(bodies_cog[:, 0]), np.isfinite(bodies_cog[:, 1]), color='black', marker='o', markersize=50)
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
