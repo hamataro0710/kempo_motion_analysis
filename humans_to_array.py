@@ -32,6 +32,7 @@ def calc_cog(segments, rates=[]):
     :return: center of gravity; this reflects segments' score > 0 or not to reflect occlusion.
     """
     # seg_cog = (np.dot(np.multiply(rates, segments[:, 2]), segments[:, :2])) / np.dot(segments[:, 2], np.array(rates))
+    rates = np.array(rates)
     rates = [rates[num] if segments[num,2]>0 else 0 for num in range(len(rates))]
     seg_cog = (np.dot(rates, segments[:, :2])) / sum(rates)
     print('cog_vals: ',seg_cog, '\nmean: ',np.mean(segments[:, 2]))
