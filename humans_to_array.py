@@ -35,8 +35,9 @@ def calc_cog(segments, rates):
     rates = np.array(rates)
     if type(segments) is list:
         segments = np.array(segments)
+    segments = segments[np.isnan(segments)] = 0
     rates = [rates[num] if segments[num, 2] > 0 else 0 for num in range(len(rates))]
-    rates = rates[~np.isnan(segments[:, 2])]
+    # rates = rates[~np.isnan(segments[:, 2])]
     seg_cog = (np.dot(rates, segments[:, :2])) / sum(rates)
     # print('cog_vals: ',seg_cog, '\nmean: ',np.mean(segments[:, 2]))
     seg_cog = np.append(seg_cog, np.mean(segments[:, 2]))
@@ -71,11 +72,11 @@ def segment_cog(a_human):
 
 def calc_degree(seg1, seg2):
     vec = np.array(seg1) - np.array(seg2)
-    degree = np.angle(vec[0] + vec[1]*1j, deg=True)
+    degree = np.angle(vec[0] + vec[1] * 1j, deg=True)
 
 def segments_degree(a_human):
     degrees = []
-    neck = a_human[1] if a_human[1,2] != 0 else calc_cog((a_human[2], a_human[5]))  #torso
+    neck = a_human[1] if a_human[1, 2] != 0 else calc_cog((a_human[2], a_human[5]))  #torso
     pelvis = calc_cog(np.vstack((a_human[8], a_human[11])))
     degrees = [calc_degree(neck, pelvis),
                calc_cog(a_human[2], a_human[3]),
