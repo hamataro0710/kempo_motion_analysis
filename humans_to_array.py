@@ -75,6 +75,6 @@ def segments_degree(a_human):
     degrees = [calc_degree(neck, pelvis),
                calc_cog(a_human[2], a_human[3]),
                calc_cog(a_human[3], a_human[4]),
-               calc_cog(a_human[], a_human[3]),
+               calc_cog(a_human[5], a_human[6]),]
 
     return degrees
