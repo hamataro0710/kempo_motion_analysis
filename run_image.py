@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # estimate human poses from a single image !
     image = common.read_imgfile(path_image, None, None)
     logger.debug('shape of image: '+ str(image.shape))
-    w_pxl, h_pxl = image.shape[0], image.shape[1]
+    h_pxl, w_pxl = image.shape[0], image.shape[1]
     print(w_pxl, h_pxl)
     if image is None:
         logger.error('Image can not be read, path=%s' % path_image)
