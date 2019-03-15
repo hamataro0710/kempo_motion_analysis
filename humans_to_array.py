@@ -33,7 +33,7 @@ def calc_cog(segments, rates=[]):
     """
     # seg_cog = (np.dot(np.multiply(rates, segments[:, 2]), segments[:, :2])) / np.dot(segments[:, 2], np.array(rates))
     rates = np.array(rates)
-    if type(segments) == "list":
+    if type(segments) is list:
         segments = np.array(segments)
     rates = [rates[num] if segments[num,2]>0 else 0 for num in range(len(rates))]
     seg_cog = (np.dot(rates, segments[:, :2])) / sum(rates)
