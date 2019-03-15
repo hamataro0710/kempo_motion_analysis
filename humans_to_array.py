@@ -44,8 +44,8 @@ def segment_cog(a_human):
     if a_human[1,2] != 0:
         neck_cog = a_human[1]
     else:
-        neck_cog = calc_cog(np.vstack((a_human[2],a_human[5])))
-    hip_cog = calc_cog(np.vstack((a_human[8], a_human[11])))
+        neck_cog = calc_cog(np.vstack((a_human[2],a_human[5])), [1, 1])
+    hip_cog = calc_cog(np.vstack((a_human[8], a_human[11])), [1, 1])
     torso_cog = calc_cog(np.vstack((neck_cog, hip_cog)), [1, 1])
     r_thigh_cog = calc_cog(np.vstack((a_human[8], a_human[9])), [52.5, 47.5])
     l_thigh_cog = calc_cog(np.vstack((a_human[11], a_human[12])), [52.5, 47.5])
