@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
     # estimate human poses from a single image !
     image = common.read_imgfile(path_image, None, None)
-    logger.debug('shape of image: '+ str(image.shape))
+    logger.debug('shape of image: ' + str(image.shape))
     h_pxl, w_pxl = image.shape[0], image.shape[1]
     print(w_pxl, h_pxl)
     if image is None:
@@ -62,7 +62,6 @@ if __name__ == '__main__':
     elapsed = time.time() - t
     logger.info('inference image: %s in %.4f seconds.' % (path_image, elapsed))
 
-    bodies_cog = [[0,0,0]]
     if args.cog:
         ma = MotionAnalysis()
         bodies_cog = ma.multi_bodies_cog(humans=humans)
@@ -72,7 +71,7 @@ if __name__ == '__main__':
         fig = plt.figure()
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         if args.cog:
-            bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, 18, 1])]
+            bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, 14, 1])]
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:,:,1])]
             plt.scatter(bodies_cog[:, 0] * w_pxl, bodies_cog[:, 1] * h_pxl, color='black', marker='o', s=5)
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
