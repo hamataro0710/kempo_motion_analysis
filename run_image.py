@@ -72,8 +72,9 @@ if __name__ == '__main__':
         fig = plt.figure()
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         if args.cog:
+            # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, :, 1])]
+            bodies_cog[~np.isnan(bodies_cog[:, :, :])] = 0
             logger.debug(str(bodies_cog))
-            bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, 13:, 1])]
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:,:,1])]
             plt.scatter(bodies_cog[:, 0] * w_pxl, bodies_cog[:, 1] * h_pxl, color=args.cog_color, marker='o', s=5)
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
