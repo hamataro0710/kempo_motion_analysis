@@ -130,7 +130,7 @@ class MotionAnalysis():
         acc_cur = (vel_cur - human_motion[1]) * self.fps
         return np.concatenate((seg_cog, vel_cur, acc_cur))
 
-    def rotation(self, human):
+    # def rotation(self, human):
 
 
 # class CocoPart(Enum):
