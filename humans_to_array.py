@@ -37,7 +37,7 @@ def calc_cog(segments, rates=[]):
         segments = np.array(segments)
     rates = [rates[num] if segments[num,2]>0 else 0 for num in range(len(rates))]
     seg_cog = (np.dot(rates, segments[:, :2])) / sum(rates)
-    print('cog_vals: ',seg_cog, '\nmean: ',np.mean(segments[:, 2]))
+    # print('cog_vals: ',seg_cog, '\nmean: ',np.mean(segments[:, 2]))
     seg_cog = np.append(seg_cog, np.mean(segments[:, 2]))
     return seg_cog
 
