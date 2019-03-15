@@ -50,7 +50,9 @@ if __name__ == '__main__':
 
     # estimate human poses from a single image !
     image = common.read_imgfile(path_image, None, None)
-    print(image.shape)
+    logger.debug('shape of image: '+ str(image.shape))
+    w_pxl, h_pxl = image.shape[0], image.shape[1]
+    print(w_pxl, h_pxl)
     if image is None:
         logger.error('Image can not be read, path=%s' % path_image)
         sys.exit(-1)
@@ -71,8 +73,8 @@ if __name__ == '__main__':
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         if args.cog:
             logger.debug('bodies cog\n' + str(bodies_cog))
-            w_pxl, h_pxl = image.shape[0], image.shape[1]
             bodies_cog = bodies_cog[~np.isnan(bodies_cog[:,:,1])]
+            print(type(bodies_cog))
             plt.plot(np.isfinite(bodies_cog[:, 0]) * w_pxl, np.isfinite(bodies_cog[:, 1]) * h_pxl, color='black', marker='o', markersize=5)
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
