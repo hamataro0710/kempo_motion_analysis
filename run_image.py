@@ -76,7 +76,7 @@ if __name__ == '__main__':
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
             logger.debug(str(bodies_cog))
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:,:,1])]
-            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color, marker='o', s=5)
+            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color, marker='o', s=10)
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
         plt.savefig(os.path.join(path_out,
