@@ -9,6 +9,7 @@ import subprocess
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 import matplotlib.pyplot as plt
+from motion_analysis import MotionAnalysis
 
 logger = logging.getLogger('TfPoseEstimator-Video')
 logger.setLevel(logging.DEBUG)
@@ -34,6 +35,8 @@ if __name__ == '__main__':
     parser.add_argument('--resize-out-ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
     parser.add_argument('--start_frame', type=int, default=0)
+    parser.add_argument('--cog', type=bool, default=False)
+    parser.add_argument('--cog_color', type=str, default='black')
     args = parser.parse_args()
 
     logger.debug('initialization #s : #s') # (args.model, get_graph_path(args.model)))
@@ -46,10 +49,13 @@ if __name__ == '__main__':
     path_movie_out = os.path.join(args.path, 'movie_estimated')
     path_csv_estimated = os.path.join(args.path, 'data_estimated')
     path_png_estimated = os.path.join(args.path, 'png_estimated')
+    os.makedirs(path_png_estimated, exist_ok=True)
 
     w, h = model_wh(args.resolution)
     e = TfPoseEstimator(get_graph_path(args.model), target_size=(w, h))
     cap = cv2.VideoCapture(path_movie_src)
+    if args.cog:
+        ma = MotionAnalysis()
 
     if cap.isOpened() is False:
         print("Error opening video stream or file")
@@ -59,6 +65,9 @@ if __name__ == '__main__':
         ret_val, image = cap.read()
         if not ret_val:
             break
+        if frame_no == 0:
+            h_pxl, w_pxl = image.shape[0], image.shape[1]
+
         if frame_no > args.start_frame:
             # humans = e.inference(image)
             humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio)
@@ -69,6 +78,12 @@ if __name__ == '__main__':
                 image = np.zeros(image.shape)
             image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            if args.cog:
+                bodies_cog = ma.multi_bodies_cog(humans=humans)
+                bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
+                logger.debug(str(bodies_cog))
+                plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color,
+                            marker='o', s=20)
             bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
             bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
             plt.savefig(os.path.join(path_png_estimated,
