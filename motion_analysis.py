@@ -80,7 +80,7 @@ class MotionAnalysis():
     #     head_inertia[1, 1] = (-367.903 + 2843.24*self.head_length + 2.71413*self.weight)/10000
     #     head_inertia[2, 2] = (-354.077 + 2680.71*self.head_length + 2.4924*self.weight)/10000
     #     head_inertia[3, 3] = (-138.956 + 1307.37*self.head_length + 1.24856*self.weight)/10000
-        [humans_for_gravity
+    #     [humans_for_gravity
 
 
     def single_body_cog(self, human):
