@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
     image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
     if not args.plt_network:
-        fig = plt.figure()
+        fig = plt.figure(figsize=(int(w/100), int(w/100)))
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         if args.cog:
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, :, 1])]

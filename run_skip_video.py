@@ -86,6 +86,8 @@ if __name__ == '__main__':
                 logger.debug(str(bodies_cog))
                 plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color,
                             marker='o', s=20)
+                plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
+                plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
             bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
             bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
             plt.savefig(os.path.join(path_png_estimated,
