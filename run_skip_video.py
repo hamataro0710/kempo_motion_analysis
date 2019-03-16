@@ -64,12 +64,12 @@ if __name__ == '__main__':
     frame_no = 0
     # f = open(os.path.join(path_csv_estimated,"test.txt"), 'w')
     while cap.isOpened():
-        plt.figure(figsize=(int(w_pxl/20), int(h_pxl/20)))
         ret_val, image = cap.read()
         if not ret_val:
             break
         if frame_no == 0:
             h_pxl, w_pxl = image.shape[0], image.shape[1]
+        plt.figure(figsize=(int(w_pxl/20), int(h_pxl/20)))
 
         if frame_no > args.start_frame:
             # humans = e.inference(image)
