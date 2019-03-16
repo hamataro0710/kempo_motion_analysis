@@ -39,7 +39,7 @@ if __name__ == '__main__':
     parser.add_argument('--cog_color', type=str, default='black')
     args = parser.parse_args()
 
-    logger.debug('initialization #s : #s') # (args.model, get_graph_path(args.model)))
+    logger.debug('initialization #s : #s')  # (args.model, get_graph_path(args.model)))
 
     # data directory
     if args.path:
@@ -64,6 +64,7 @@ if __name__ == '__main__':
     frame_no = 0
     # f = open(os.path.join(path_csv_estimated,"test.txt"), 'w')
     while cap.isOpened():
+        plt.figure(figsize=(int(w/20), int(w/20)))
         ret_val, image = cap.read()
         if not ret_val:
             break

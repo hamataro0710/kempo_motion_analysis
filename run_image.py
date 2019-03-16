@@ -68,18 +68,19 @@ if __name__ == '__main__':
 
     image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
     if not args.plt_network:
-        fig = plt.figure(figsize=(int(w/100), int(w/100)))
+        fig = plt.figure(figsize=(int(w_pxl/200), int(h_pxl/200)))
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         if args.cog:
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, :, 1])]
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
-            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color, s=20)
+            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color, s=150)
             plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
             plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
+            plt.ylim(h_pxl, 0)
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
-        os.makedirs(path_out,exist_ok=True)
+        os.makedirs(path_out, exist_ok=True)
         plt.savefig(os.path.join(path_out,
                                  args.image.split('.')[-2] + "_estimated.png"))
         plt.show()
