@@ -64,7 +64,7 @@ if __name__ == '__main__':
     frame_no = 0
     # f = open(os.path.join(path_csv_estimated,"test.txt"), 'w')
     while cap.isOpened():
-        plt.figure(figsize=(int(w/20), int(w/20)))
+        plt.figure(figsize=(int(w_pxl/20), int(h_pxl/20)))
         ret_val, image = cap.read()
         if not ret_val:
             break
@@ -86,7 +86,7 @@ if __name__ == '__main__':
                 bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
                 logger.debug(str(bodies_cog))
                 plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color,
-                            marker='o', s=20)
+                            marker='o', s=150)
                 plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
                 plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
             bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
