@@ -65,7 +65,6 @@ if __name__ == '__main__':
 
     if args.cog:
         ma = MotionAnalysis()
-        bodies_cog = ma.multi_bodies_cog(humans=humans)
 
     image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
     if not args.plt_network:
@@ -73,10 +72,10 @@ if __name__ == '__main__':
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         if args.cog:
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, :, 1])]
+            bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
-            logger.debug(str(bodies_cog))
-            # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:,:,1])]
-            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color, marker='o', s=20)
+            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color, s=20)
+            plt.vlines([bodies_cog[:, 6, 0], bodies_cog[:, 7, 0]], ymin=0, ymax=h_pxl, linestyles='dashed')
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
         os.makedirs(path_out,exist_ok=True)

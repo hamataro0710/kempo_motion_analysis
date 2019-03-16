@@ -25,7 +25,6 @@ class MotionAnalysis():
         self.arm_length = 0.3 /1.70 * self.height
         self.forearm_length = 0.25 /1.70 * self.height
         self.hand_length = 0.19 /1.70 * self.height
-
     # body_weight:
         self.foot_weight =  -0.26784 + 2.61804 * self.foot_length  + 0.00545*self.weight
         self.leg_weight =  -1.71524 + 6.04396 * self.leg_length   + 0.03885*self.weight
@@ -82,7 +81,6 @@ class MotionAnalysis():
     #     head_inertia[3, 3] = (-138.956 + 1307.37*self.head_length + 1.24856*self.weight)/10000
     #     [humans_for_gravity
 
-
     def single_body_cog(self, human):
         segments_cog = segment_cog(human)
         cog = calc_cog(segments_cog,
@@ -103,10 +101,10 @@ class MotionAnalysis():
             segments_cog = segment_cog(a_human=a_human)
             cog = calc_cog(segments_cog,
                            [self.head_weight, self.torso_weight,
-                            self.thigh_weight, self.thigh_weight, self.leg_weight,
-                            self.leg_weight,
-                            self.foot_weight, self.foot_weight, self.arm_weight,
-                            self.arm_weight,
+                            self.thigh_weight, self.thigh_weight,
+                            self.leg_weight, self.leg_weight,
+                            self.foot_weight, self.foot_weight,
+                            self.arm_weight, self.arm_weight,
                             self.forearm_weight, self.forearm_weight, self.hand_weight,
                             self.hand_weight,
                             ])
