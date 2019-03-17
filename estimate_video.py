@@ -76,14 +76,16 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
 
         t = time.time()
         humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
-        elapsed = time.time() - t
+        time_estimation = time.time() - t
         if frame_no % int(caps_fps) == 0:
             logger.info("Now estimating at:" + str(int(frame_no/caps_fps)) + "[sec]")
-            logger.info('inference image: %s in %.4f seconds.' % (path_image, elapsed))
+            logger.info('inference in %.4f seconds.' % (time_estimation))
 
         a_humans = humans_to_array(humans)
         logger.debug(str(a_humans))
+
         if cog:
+            t = time.time()
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
             humans_feature = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
@@ -91,6 +93,9 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
                                              bodies_cog.reshape(bodies_cog.shape[0], bodies_cog.shape[1] * bodies_cog.shape[2])),axis=1)
             df_frame = pd.DataFrame(humans_feature.round(4))
             df_frame.to_csv(csv_file, index=False, header=None, mode='a')
+            time_cog = time.time() - t
+            if frame_no % int(caps_fps) == 0:
+                logger.info('calculation in %.4f seconds.' % (time_cog))
 
         if plot_image:
             plt.figure(figsize=(int(w_pxl / 200), int(h_pxl / 200)))
