@@ -19,7 +19,7 @@ fps_time = 0
 
 
 # if __name__ == '__main__':
-def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_ratio=4.0,
+def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_ratio=4.0, vertical=False,
                    cog=True, cog_color='black', showBG=True, start_frame=0, debug=False, plot_image=True):
     logger = logging.getLogger('TfPoseEstimator-Video')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
@@ -44,7 +44,14 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
     os.makedirs(path_csv_estimated, exist_ok=True)
 
     w, h = model_wh(resize)
-    e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
+    if w == 0 or h == 0:
+        if not vertical:
+            e = TfPoseEstimator(get_graph_path(model), target_size=(432, 368))
+        else:
+            e = TfPoseEstimator(get_graph_path(model), target_size=(368, 432))
+    else:
+        e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
+
     cap = cv2.VideoCapture(path_movie_src)
     caps_fps = cap.get(cv2.CAP_PROP_FPS)
     if cog:
@@ -136,7 +143,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='tf-pose-estimation Video')
     parser.add_argument('--path', type=str, default="")
     parser.add_argument('--video', type=str, default='')
-    parser.add_argument('--resize', type=str, default='432x368', help='network input resize. default=432x368')
+    parser.add_argument('--resize', type=str, default='0x0', help='network input resize. default=432x368')
     parser.add_argument('--model', type=str, default='cmu', help='cmu / mobilenet_thin')
     parser.add_argument('--showBG', type=bool, default=True, help='False to show skeleton only.')
     parser.add_argument('--start_frame', type=int, default=0)
@@ -145,9 +152,10 @@ if __name__ == '__main__':
     parser.add_argument('--resize-out-ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
     parser.add_argument('--debug', type=bool, default=False)
+    parser.add_argument('--vertical', type=bool, default=False)
     parser.add_argument('--plot_image', type=bool, default=True)
     args = parser.parse_args()
-    estimate_video(video=args.video, path=args.path, resize=args.resize, model=args.model,
+    estimate_video(video=args.video, path=args.path, resize=args.resize, model=args.model, vertical=args.vertical,
                    resize_out_ratio=args.resize_out_ratio, showBG=args.showBG, plot_image=args.plot_image,
                    cog=args.cog, cog_color=args.cog_color, start_frame=args.start_frame, debug=args.debug)
 

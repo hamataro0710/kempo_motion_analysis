@@ -15,7 +15,7 @@ from modules.motion_analysis import MotionAnalysis
 
 
 def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_network=False,
-              cog=True, cog_color='black', debug=False, resize_out_ratio=4.0):
+              cog=True, cog_color='black', debug=False, resize_out_ratio=4.0, vertical=False):
     logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
@@ -27,12 +27,15 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
 
     w, h = model_wh(resize)
     if w == 0 or h == 0:
-        e = TfPoseEstimator(get_graph_path(model), target_size=(432, 368))
+        if not vertical:
+            e = TfPoseEstimator(get_graph_path(model), target_size=(432, 368))
+        else:
+            e = TfPoseEstimator(get_graph_path(model), target_size=(368, 432))
     else:
         e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
 
-    path_image = os.path.join(path, imagefile)
-    path_out = path
+    path_image = os.path.join(path, 'pictures', imagefile)
+    path_out = os.path.join(path, 'pictures')
 
     # estimate human poses from a single image !
     image = common.read_imgfile(path_image, None, None)
@@ -108,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('--image', type=str, default='./images/p1.jpg')
     parser.add_argument('--model', type=str, default='cmu', help='cmu / mobilenet_thin')
 
-    parser.add_argument('--resize', type=str, default='"432x368"',
+    parser.add_argument('--resize', type=str, default='"0x0"',
                         help='if provided, resize images before they are processed. '
                              'default=0x0, Recommends : 432x368 or 656x368 or 1312x736 ')
     parser.add_argument('--resize_out_ratio', type=float, default=4.0,
@@ -118,7 +121,9 @@ if __name__ == '__main__':
     parser.add_argument('--cog', type=bool, default=True)
     parser.add_argument('--cog_color', type=str, default='black')
     parser.add_argument('--debug', type=bool, default=False)
+    parser.add_argument('--vertical', type=bool, default=False)
+
     args = parser.parse_args()
     estimate_image(imagefile=args.image, model=args.model, path=args.path, resize=args.resize,
                    resize_out_ratio=args.resize_out_ratio, plt_network=args.plt_network,
-                   cog=args.cog, cog_color=args.cog_color, debug=args.debug)
+                   cog=args.cog, cog_color=args.cog_color, debug=args.debug, vertical=args.vertical)
