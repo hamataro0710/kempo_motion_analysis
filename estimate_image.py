@@ -14,14 +14,14 @@ from tf_pose.networks import get_graph_path, model_wh
 from modules.motion_analysis import MotionAnalysis
 
 
-def estimate_image(image, model='cmu', path='', resize='432x368', plt_network=False,
+def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_network=False,
               cog=True, cog_color='black', debug=False, resize_out_ratio=4.0):
     logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG) if debug else ch.setLevel(logging.INFO)
-    formatter = logging.Formatter('[%(levelname)s] %(message)s')
-    # formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
+    # formatter = logging.Formatter('[%(levelname)s] %(message)s')
+    formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
@@ -31,7 +31,7 @@ def estimate_image(image, model='cmu', path='', resize='432x368', plt_network=Fa
     else:
         e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
 
-    path_image = os.path.join(path, image)
+    path_image = os.path.join(path, imagefile)
     path_out = path
 
     # estimate human poses from a single image !
@@ -67,7 +67,7 @@ def estimate_image(image, model='cmu', path='', resize='432x368', plt_network=Fa
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
         os.makedirs(path_out, exist_ok=True)
         plt.savefig(os.path.join(path_out,
-                                 image.split('.')[-2] + "_estimated.png"))
+                                 imagefile.split('.')[-2] + "_estimated.png"))
         plt.show()
     else:
         fig = plt.figure()
@@ -119,6 +119,6 @@ if __name__ == '__main__':
     parser.add_argument('--cog_color', type=str, default='black')
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
-    estimate_image(image=args.image, model=args.model, path=args.path, resize=args.resize,
+    estimate_image(imagefile=args.image, model=args.model, path=args.path, resize=args.resize,
                    resize_out_ratio=args.resize_out_ratio, plt_network=args.plt_network,
                    cog=args.cog, cog_color=args.cog_color, debug=args.debug)
