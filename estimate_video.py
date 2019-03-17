@@ -53,9 +53,9 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
         e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
 
     cap = cv2.VideoCapture(path_movie_src)
+    logger.info("OPEN: %s" % path_movie_src)
     if cap.isOpened() is False:
         logger.info("ERROR: opening video stream or file")
-    logger.info("OPEN: %s" % path_movie_src)
     caps_fps = cap.get(cv2.CAP_PROP_FPS)
 
     if cog != 'skip':
