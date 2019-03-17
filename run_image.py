@@ -24,30 +24,16 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='tf-pose-estimation run')
-    parser.add_argument('--image', type=str, default='./images/p1.jpg')
-    parser.add_argument('--model', type=str, default='cmu', help='cmu / mobilenet_thin')
-
-    parser.add_argument('--resize', type=str, default='"432x368"',
-                        help='if provided, resize images before they are processed. '
-                             'default=0x0, Recommends : 432x368 or 656x368 or 1312x736 ')
-    parser.add_argument('--resize-out-ratio', type=float, default=4.0,
-                        help='if provided, resize heatmaps before they are post-processed. default=1.0')
-    parser.add_argument('--plt_network', type=bool, default=False)
-    parser.add_argument('--path', type=str, default="")
-    parser.add_argument('--cog', type=bool, default=False)
-    parser.add_argument('--cog_color', type=str, default='black')
-    args = parser.parse_args()
-
-    w, h = model_wh(args.resize)
+def run_image(image, model='cmu', path='', resize='432x368', plt_network=False,
+              cog=True, cog_color='black'):
+    w, h = model_wh(resize)
     if w == 0 or h == 0:
-        e = TfPoseEstimator(get_graph_path(args.model), target_size=(432, 368))
+        e = TfPoseEstimator(get_graph_path(model), target_size=(432, 368))
     else:
-        e = TfPoseEstimator(get_graph_path(args.model), target_size=(w, h))
+        e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
 
-    path_image = os.path.join(args.path, args.image)
-    path_out = args.path
+    path_image = os.path.join(path, image)
+    path_out = path
 
     # estimate human poses from a single image !
     image = common.read_imgfile(path_image, None, None)
@@ -59,22 +45,22 @@ if __name__ == '__main__':
         sys.exit(-1)
 
     t = time.time()
-    humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio)
+    humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
     elapsed = time.time() - t
     logger.info('inference image: %s in %.4f seconds.' % (path_image, elapsed))
 
-    if args.cog:
+    if cog:
         ma = MotionAnalysis()
 
     image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
-    if not args.plt_network:
+    if not plt_network:
         fig = plt.figure(figsize=(int(w_pxl/200), int(h_pxl/200)))
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        if args.cog:
+        if cog:
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, :, 1])]
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
-            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color, s=150)
+            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=cog_color, s=150)
             plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
             plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
             plt.ylim(h_pxl, 0)
@@ -82,7 +68,7 @@ if __name__ == '__main__':
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
         os.makedirs(path_out, exist_ok=True)
         plt.savefig(os.path.join(path_out,
-                                 args.image.split('.')[-2] + "_estimated.png"))
+                                 image.split('.')[-2] + "_estimated.png"))
         plt.show()
     else:
         fig = plt.figure()
@@ -116,3 +102,22 @@ if __name__ == '__main__':
         plt.imshow(tmp2_even, cmap=plt.cm.gray, alpha=0.5)
         plt.colorbar()
         plt.show()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='tf-pose-estimation run')
+    parser.add_argument('--image', type=str, default='./images/p1.jpg')
+    parser.add_argument('--model', type=str, default='cmu', help='cmu / mobilenet_thin')
+
+    parser.add_argument('--resize', type=str, default='"432x368"',
+                        help='if provided, resize images before they are processed. '
+                             'default=0x0, Recommends : 432x368 or 656x368 or 1312x736 ')
+    parser.add_argument('--resize-out-ratio', type=float, default=4.0,
+                        help='if provided, resize heatmaps before they are post-processed. default=1.0')
+    parser.add_argument('--plt_network', type=bool, default=False)
+    parser.add_argument('--path', type=str, default="")
+    parser.add_argument('--cog', type=bool, default=False)
+    parser.add_argument('--cog_color', type=str, default='black')
+    args = parser.parse_args()
+    run_image(image=args.image, model=args.model, path=args.path, resize=args.resize,
+              plt_network=args.plt_network, cog=args.cog, cog_color=args.cog_color)

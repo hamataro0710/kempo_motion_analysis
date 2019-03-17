@@ -22,12 +22,9 @@ logger.addHandler(ch)
 
 fps_time = 0
 
-
 # if __name__ == '__main__':
-def estimate_video(video, path='', resolution='432x368', model='cmu',
+def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_ratio=4.0,
                    cog=True, cog_color='black', showBG=True, start_frame=0):
-    parser.add_argument('--write', type=str, default=None)
-
     # data directory
     if path:
         path_movie_src = os.path.join(path, 'movie', video)
@@ -109,9 +106,12 @@ if __name__ == '__main__':
     parser.add_argument('--start_frame', type=int, default=0)
     parser.add_argument('--cog', type=bool, default=False)
     parser.add_argument('--cog_color', type=str, default='black')
+    parser.add_argument('--resize-out-ratio', type=float, default=4.0,
+                        help='if provided, resize heatmaps before they are post-processed. default=1.0')
     args = parser.parse_args()
     logger.debug('initialization #s : #s')  # (args.model, get_graph_path(args.model)))
     estimate_video(video=args.video, path=args.path, resolution=args.resolution, model=args.model,
-                   cog=args.cog, cog_color=args.cog_color, showBG=args.showBG, start_frame=args.start_frame)
+                   resize_out_ratio=args.resize_out_ratio, showBG=args.showBG,
+                   cog=args.cog, cog_color=args.cog_color, start_frame=args.start_frame)
 
 logger.debug('finished+')
