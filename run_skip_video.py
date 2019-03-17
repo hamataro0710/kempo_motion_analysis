@@ -5,6 +5,7 @@ import os
 import cv2
 import numpy as np
 import subprocess
+import gc
 
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
@@ -69,32 +70,35 @@ if __name__ == '__main__':
             break
         if frame_no == 0:
             h_pxl, w_pxl = image.shape[0], image.shape[1]
-        plt.figure(figsize=(int(w_pxl/20), int(h_pxl/20)))
-
-        if frame_no > args.start_frame:
+        if frame_no < args.start_frame:
+            continue
             # humans = e.inference(image)
-            humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio)
-            print(humans)
-            print(frame_no)
-            # f.writelines(humans)
-            if not args.showBG:
-                image = np.zeros(image.shape)
-            image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
-            plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-            if args.cog:
-                bodies_cog = ma.multi_bodies_cog(humans=humans)
-                bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
-                logger.debug(str(bodies_cog))
-                plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color,
-                            marker='o', s=150)
-                plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
-                plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
-            bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
-            bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
-            plt.savefig(os.path.join(path_png_estimated,
-                                     args.video.split('.')[-2] + '{:06d}'.format(frame_no) + ".png"))
-            # plt.savefig("../short/"+args.video.split('.')[-2] + '{%06d}'.format(frame_no) + ".png")
+        plt.figure(figsize=(int(w_pxl/200), int(h_pxl/200)))
+        humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio)
+        print(humans)
+        print(frame_no)
+        # f.writelines(humans)
+        if not args.showBG:
+            image = np.zeros(image.shape)
+        image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
+        plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        if args.cog:
+            bodies_cog = ma.multi_bodies_cog(humans=humans)
+            bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
+            logger.debug(str(bodies_cog))
+            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=args.cog_color,
+                        marker='o', s=150)
+            plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
+            plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
+        bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
+        bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
+        plt.savefig(os.path.join(path_png_estimated,
+                                 args.video.split('.')[-2] + '{:06d}'.format(frame_no) + ".png"))
+        plt.clf()
+        # plt.savefig("../short/"+args.video.split('.')[-2] + '{%06d}'.format(frame_no) + ".png")
         frame_no += 1
+        gc.collect()
+
         # cv2.putText(image, "FPS: #f" # (1.0 / (time.time() - fps_time)), (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         # cv2.imshow('tf-pose-estimation result', image)
         # fps_time = time.time()
