@@ -59,6 +59,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
     caps_fps = cap.get(cv2.CAP_PROP_FPS)
 
     if cog:
+        logger.info('MODE: Plot Center of Gravity')
         ma = MotionAnalysis()
     # CSV FILE SETTING
     segments = ["Nose","Neck","RShoulder","RElbow","RWrist","LShoulder","LElbow","LWrist",
