@@ -45,6 +45,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
     w, h = model_wh(resize)
     e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
     cap = cv2.VideoCapture(path_movie_src)
+    caps_fps = cap.get(cv2.CAP_PROP_FPS)
     if cog:
         ma = MotionAnalysis()
 
@@ -76,7 +77,8 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
         logger.debug(str(frame_no))
         a_humans = humans_to_array(humans)
         logger.debug(str(a_humans))
-
+        if frame_no % int(caps_fps) == 0:
+            logger.info("Now estimating at:" + str(int(frame_no/caps_fps)) + "[sec]")
         if cog:
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
