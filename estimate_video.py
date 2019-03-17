@@ -19,8 +19,8 @@ fps_time = 0
 
 
 # if __name__ == '__main__':
-def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_ratio=4.0, vertical=False,
-                   cog=True, cog_color='black', showBG=True, start_frame=0, debug=False, plot_image=True):
+def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_ratio=4.0, orientation='horizontal',
+                   cog="", cog_color='black', showBG=True, start_frame=0, debug=False, plot_image=""):
     logger = logging.getLogger('TfPoseEstimator-Video')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
@@ -45,7 +45,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
 
     w, h = model_wh(resize)
     if w == 0 or h == 0:
-        if not vertical:
+        if orientation == 'horizontal':
             e = TfPoseEstimator(get_graph_path(model), target_size=(432, 368))
         else:
             e = TfPoseEstimator(get_graph_path(model), target_size=(368, 432))
@@ -58,7 +58,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
     logger.info("OPEN: %s" % path_movie_src)
     caps_fps = cap.get(cv2.CAP_PROP_FPS)
 
-    if cog:
+    if cog != 'skip':
         logger.info('MODE: Plot Center of Gravity')
         ma = MotionAnalysis()
     # CSV FILE SETTING
@@ -94,7 +94,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
         a_humans = humans_to_array(humans)
         logger.debug(str(a_humans))
 
-        if cog:
+        if cog != 'skip':
             t = time.time()
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
@@ -107,14 +107,14 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             if frame_no % int(caps_fps) == 0:
                 logger.info('calculation in %.4f seconds.' % (time_cog))
 
-        if plot_image:
+        if plot_image != 'skip':
             plt.figure(figsize=(int(w_pxl / 200), int(h_pxl / 200)))
             if not showBG:
                 image = np.zeros(image.shape)
             image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
             # logger.debug(str(bodies_cog))
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-            if cog:
+            if cog != 'skip':
                 plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=cog_color,
                             marker='o', s=150)
                 plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
@@ -150,16 +150,16 @@ if __name__ == '__main__':
     parser.add_argument('--model', type=str, default='cmu', help='cmu / mobilenet_thin')
     parser.add_argument('--showBG', type=bool, default=True, help='False to show skeleton only.')
     parser.add_argument('--start_frame', type=int, default=0)
-    parser.add_argument('--cog', type=bool, default=False)
+    parser.add_argument('--cog', type=str, default="")
     parser.add_argument('--cog_color', type=str, default='black')
     parser.add_argument('--resize-out-ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
     parser.add_argument('--debug', type=bool, default=False)
-    parser.add_argument('--vertical', type=bool, default=False)
-    parser.add_argument('--plot_image', type=bool, default=True)
+    parser.add_argument('--orientation', type=str, default="horizontal")
+    parser.add_argument('--plot_image', type=str, default="")
     args = parser.parse_args()
     print(str(args.cog))
-    estimate_video(video=args.video, path=args.path, resize=args.resize, model=args.model, vertical=args.vertical,
+    estimate_video(video=args.video, path=args.path, resize=args.resize, model=args.model, orientation=args.orientation,
                    resize_out_ratio=args.resize_out_ratio, showBG=args.showBG, plot_image=args.plot_image,
                    cog=args.cog, cog_color=args.cog_color, start_frame=args.start_frame, debug=args.debug)
 
