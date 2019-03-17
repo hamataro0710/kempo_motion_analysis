@@ -1,5 +1,21 @@
 # what is this
-Private activity to evaluate some kind of sports moves with tf-pose-estimation.
+Activity to evaluate some kind of sports moves with tf-pose-estimation.
+
+<p align="center">
+    <img src="doc/gif/kataguruma.gif", width="480">
+    <br>
+    <sup>Testing for movies to estimate the Center of Gravity</sup>
+</p>
+<p align="center">
+    <img src="doc/pic/throwing.png", width="480">
+    <br>
+    <sup>Picture Sample</sup>
+</p>
+<p align="center">
+    <img src="doc/pic/climbing.png", width="480">
+    <br>
+    <sup>Picture Sample of Vertical</sup>
+</p>
 
 # Functions
 
