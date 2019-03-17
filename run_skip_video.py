@@ -101,7 +101,7 @@ def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_
     cmd = ["ffmpeg", "-r", "30",
            "-i", os.path.join(path_png_estimated,video.split('.')[-2] + "%06d.png"),
            "-vcodec", "libx264", "-pix_fmt", "yuv420p",
-           os.path.join(path_movie_out, video.split('.')[-2] + "out.mp4")]
+           os.path.join(path_movie_out, video.split('.')[-2] + ".mp4")]
     subprocess.call(cmd)
 
 
