@@ -78,9 +78,9 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
         t = time.time()
         humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
         time_estimation = time.time() - t
-        if frame_no % int(caps_fps) == 0:
-            logger.info("Now estimating at:" + str(int(frame_no/caps_fps)) + "[sec]")
-            logger.info('inference in %.4f seconds.' % (time_estimation))
+        # if frame_no % int(caps_fps) == 0:
+        logger.info("Now estimating at:" + str(int(frame_no/caps_fps)) + "[sec]")
+        logger.info('inference in %.4f seconds.' % (time_estimation))
 
         a_humans = humans_to_array(humans)
         logger.debug(str(a_humans))
