@@ -32,10 +32,10 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
 
     # data directory
     if path:
-        path_movie_src = os.path.join(path, 'movie', video)
+        path_movie_src = os.path.join(path, 'movies', video)
     else:
         path_movie_src = video
-    path_movie_out = os.path.join(path, 'movie_estimated')
+    path_movie_out = os.path.join(path, 'movies_estimated')
     path_csv_estimated = os.path.join(path, 'data_estimated')
     path_png_estimated = os.path.join(path, 'png_estimated')
     csv_file = os.path.join(path_csv_estimated, video.rsplit('.')[0] + '.csv')
@@ -112,10 +112,11 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
             # logger.debug(str(bodies_cog))
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-            plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=cog_color,
-                        marker='o', s=150)
-            plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
-            plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
+            if cog:
+                plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=cog_color,
+                            marker='o', s=150)
+                plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
+                plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
             # print(humans_feature)
             plt.ylim(h_pxl, 0)
 
