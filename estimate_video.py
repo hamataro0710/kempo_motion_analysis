@@ -126,7 +126,7 @@ if __name__ == '__main__':
     parser.add_argument('--model', type=str, default='cmu', help='cmu / mobilenet_thin')
     parser.add_argument('--showBG', type=bool, default=True, help='False to show skeleton only.')
     parser.add_argument('--start_frame', type=int, default=0)
-    parser.add_argument('--cog', type=bool, default=False)
+    parser.add_argument('--cog', type=bool, default=True)
     parser.add_argument('--cog_color', type=str, default='black')
     parser.add_argument('--resize-out-ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')

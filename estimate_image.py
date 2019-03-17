@@ -115,7 +115,7 @@ if __name__ == '__main__':
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
     parser.add_argument('--plt_network', type=bool, default=False)
     parser.add_argument('--path', type=str, default="")
-    parser.add_argument('--cog', type=bool, default=False)
+    parser.add_argument('--cog', type=bool, default=True)
     parser.add_argument('--cog_color', type=str, default='black')
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
