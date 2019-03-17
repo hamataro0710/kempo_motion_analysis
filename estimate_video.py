@@ -14,20 +14,20 @@ from tf_pose.networks import get_graph_path, model_wh
 from modules.humans_to_array import humans_to_array
 from modules.motion_analysis import MotionAnalysis
 
-logger = logging.getLogger('TfPoseEstimator-Video')
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('[#(asctime)s] [#(name)s] [#(levelname)s] #(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
-
 fps_time = 0
 
 
 # if __name__ == '__main__':
 def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_ratio=4.0,
-                   cog=True, cog_color='black', showBG=True, start_frame=0):
+                   cog=True, cog_color='black', showBG=True, start_frame=0, debug=False):
+    logger = logging.getLogger('TfPoseEstimator-Video')
+    logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('[#(asctime)s] [#(name)s] [#(levelname)s] #(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
     # data directory
     if path:
         path_movie_src = os.path.join(path, 'movie', video)
@@ -67,9 +67,9 @@ def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_
             # humans = e.inference(image)
         plt.figure(figsize=(int(w_pxl/200), int(h_pxl/200)))
         humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
-        print(frame_no)
+        logger.debug(str(frame_no))
         a_humans = humans_to_array(humans)
-        print(a_humans)
+        logger.debug(str(a_humans))
         if not showBG:
             image = np.zeros(image.shape)
         image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
@@ -119,10 +119,11 @@ if __name__ == '__main__':
     parser.add_argument('--cog_color', type=str, default='black')
     parser.add_argument('--resize-out-ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
+    parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     logger.debug('initialization #s : #s')  # (args.model, get_graph_path(args.model)))
     estimate_video(video=args.video, path=args.path, resolution=args.resolution, model=args.model,
                    resize_out_ratio=args.resize_out_ratio, showBG=args.showBG,
-                   cog=args.cog, cog_color=args.cog_color, start_frame=args.start_frame)
+                   cog=args.cog, cog_color=args.cog_color, start_frame=args.start_frame, debug=args.debug)
 
 logger.debug('finished+')

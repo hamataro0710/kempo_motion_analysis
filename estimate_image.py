@@ -13,17 +13,18 @@ from tf_pose.networks import get_graph_path, model_wh
 
 from modules.motion_analysis import MotionAnalysis
 
-logger = logging.getLogger('TfPoseEstimator')
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
-
 
 def estimate_image(image, model='cmu', path='', resize='432x368', plt_network=False,
-              cog=True, cog_color='black'):
+              cog=True, cog_color='black', debug=False):
+    logger = logging.getLogger('TfPoseEstimator')
+    logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG) if debug else ch.setLevel(logging.INFO)
+    formatter = logging.Formatter('[%(levelname)s] %(message)s')
+    # formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
     w, h = model_wh(resize)
     if w == 0 or h == 0:
         e = TfPoseEstimator(get_graph_path(model), target_size=(432, 368))
@@ -37,7 +38,7 @@ def estimate_image(image, model='cmu', path='', resize='432x368', plt_network=Fa
     image = common.read_imgfile(path_image, None, None)
     logger.debug('shape of image: ' + str(image.shape))
     h_pxl, w_pxl = image.shape[0], image.shape[1]
-    print(w_pxl, h_pxl)
+    logger.debug(w_pxl, h_pxl)
     if image is None:
         logger.error('Image can not be read, path=%s' % path_image)
         sys.exit(-1)
@@ -116,6 +117,7 @@ if __name__ == '__main__':
     parser.add_argument('--path', type=str, default="")
     parser.add_argument('--cog', type=bool, default=False)
     parser.add_argument('--cog_color', type=str, default='black')
+    parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     estimate_image(image=args.image, model=args.model, path=args.path, resize=args.resize,
-              plt_network=args.plt_network, cog=args.cog, cog_color=args.cog_color)
+              plt_network=args.plt_network, cog=args.cog, cog_color=args.cog_color, debug=args.debug)
