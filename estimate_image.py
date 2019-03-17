@@ -17,7 +17,7 @@ from modules.motion_analysis import MotionAnalysis
 def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_network=False,
               cog=True, cog_color='black', debug=False, resize_out_ratio=4.0):
     logger = logging.getLogger('TfPoseEstimator')
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG) if debug else ch.setLevel(logging.INFO)
     formatter = logging.Formatter('[%(levelname)s] %(message)s')

@@ -24,7 +24,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
     logger = logging.getLogger('TfPoseEstimator-Video')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
+    ch.setLevel(logging.DEBUG) if debug else ch.setLevel(logging.INFO)
     formatter = logging.Formatter('[#(asctime)s] [#(name)s] [#(levelname)s] #(message)s')
     ch.setFormatter(formatter)
     logger.addHandler(ch)
