@@ -20,8 +20,8 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG) if debug else ch.setLevel(logging.INFO)
-    # formatter = logging.Formatter('[%(levelname)s] %(message)s')
-    formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
+    formatter = logging.Formatter('[%(levelname)s] %(message)s')
+    # formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
