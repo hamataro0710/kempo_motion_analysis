@@ -1,19 +1,17 @@
 import argparse
 import logging
+import os
 import sys
 import time
-import os
-import numpy as np
+
 import cv2
 import matplotlib.pyplot as plt
-# import importlib
-# tf_pose_estimation = importlib.import_module("tf-pose-estimation")
-
+import numpy as np
 from tf_pose import common
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 
-from motion_analysis import MotionAnalysis
+from modules.motion_analysis import MotionAnalysis
 
 logger = logging.getLogger('TfPoseEstimator')
 logger.setLevel(logging.DEBUG)
@@ -24,7 +22,7 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def run_image(image, model='cmu', path='', resize='432x368', plt_network=False,
+def estimate_image(image, model='cmu', path='', resize='432x368', plt_network=False,
               cog=True, cog_color='black'):
     w, h = model_wh(resize)
     if w == 0 or h == 0:
@@ -119,5 +117,5 @@ if __name__ == '__main__':
     parser.add_argument('--cog', type=bool, default=False)
     parser.add_argument('--cog_color', type=str, default='black')
     args = parser.parse_args()
-    run_image(image=args.image, model=args.model, path=args.path, resize=args.resize,
+    estimate_image(image=args.image, model=args.model, path=args.path, resize=args.resize,
               plt_network=args.plt_network, cog=args.cog, cog_color=args.cog_color)

@@ -1,5 +1,7 @@
 import numpy as np
-from humans_to_array import calc_cog, segment_cog, humans_to_array
+
+from modules.humans_to_array import calc_cog, segment_cog, humans_to_array
+
 """
 Estimation of PROPERTIES of BODY segments
 this estimation depends on japanese paper;

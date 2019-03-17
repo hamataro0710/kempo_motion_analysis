@@ -1,18 +1,19 @@
 import argparse
+import gc
 import logging
-import time
 import os
+import subprocess
+
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import subprocess
-import gc
-
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
-import matplotlib.pyplot as plt
-from motion_analysis import MotionAnalysis
-from humans_to_array import humans_to_array
+
+from modules.humans_to_array import humans_to_array
+from modules.motion_analysis import MotionAnalysis
+
 logger = logging.getLogger('TfPoseEstimator-Video')
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
@@ -22,6 +23,7 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 fps_time = 0
+
 
 # if __name__ == '__main__':
 def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_ratio=4.0,

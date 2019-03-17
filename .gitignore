@@ -5,6 +5,6 @@ notebook*
 ./etcs/*
 ./images/*
 ./launch/*
-./modules/*
+./models/*
 ./msg/*
 ./scripts/*
