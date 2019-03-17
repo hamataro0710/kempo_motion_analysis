@@ -3,15 +3,15 @@ import gc
 import logging
 import os
 import subprocess
-
+import time
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 # from tf_pose.common import CocoPart
-
 from modules.humans_to_array import humans_to_array
 from modules.motion_analysis import MotionAnalysis
 
@@ -73,12 +73,16 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             frame_no += 1
             continue
             # humans = e.inference(image)
+
+        t = time.time()
         humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
-        logger.debug(str(frame_no))
-        a_humans = humans_to_array(humans)
-        logger.debug(str(a_humans))
+        elapsed = time.time() - t
         if frame_no % int(caps_fps) == 0:
             logger.info("Now estimating at:" + str(int(frame_no/caps_fps)) + "[sec]")
+            logger.info('inference image: %s in %.4f seconds.' % (path_image, elapsed))
+
+        a_humans = humans_to_array(humans)
+        logger.debug(str(a_humans))
         if cog:
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
