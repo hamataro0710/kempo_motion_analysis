@@ -36,7 +36,7 @@ def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_
     path_movie_out = os.path.join(path, 'movie_estimated')
     path_csv_estimated = os.path.join(path, 'data_estimated')
     path_png_estimated = os.path.join(path, 'png_estimated')
-    csv_file = os.path.join(path_csv_estimated, video.rsplit('.')[0])
+    csv_file = os.path.join(path_csv_estimated, video.rsplit('.')[0] + '.csv')
     os.makedirs(path_movie_out, exist_ok=True)
     os.makedirs(path_png_estimated, exist_ok=True)
     os.makedirs(path_csv_estimated, exist_ok=True)
@@ -86,7 +86,7 @@ def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_
                                              a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                              bodies_cog.reshape(bodies_cog.shape[0], bodies_cog.shape[1] * bodies_cog.shape[2])),axis=1)
             # print(humans_feature)
-            df_frame = pd.DataFrame(humans_feature)
+            df_frame = pd.DataFrame(humans_feature.round(4))
             df_frame.to_csv(csv_file, index=False, header=None, mode='a')
 
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
