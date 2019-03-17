@@ -15,7 +15,7 @@ from modules.motion_analysis import MotionAnalysis
 
 
 def estimate_image(image, model='cmu', path='', resize='432x368', plt_network=False,
-              cog=True, cog_color='black', debug=False):
+              cog=True, cog_color='black', debug=False, resize_out_ratio=4.0):
     logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('--resize', type=str, default='"432x368"',
                         help='if provided, resize images before they are processed. '
                              'default=0x0, Recommends : 432x368 or 656x368 or 1312x736 ')
-    parser.add_argument('--resize-out-ratio', type=float, default=4.0,
+    parser.add_argument('--resize_out_ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
     parser.add_argument('--plt_network', type=bool, default=False)
     parser.add_argument('--path', type=str, default="")
@@ -120,4 +120,5 @@ if __name__ == '__main__':
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     estimate_image(image=args.image, model=args.model, path=args.path, resize=args.resize,
-              plt_network=args.plt_network, cog=args.cog, cog_color=args.cog_color, debug=args.debug)
+                   resize_out_ratio=args.resize_out_ratio, plt_network=args.plt_network,
+                   cog=args.cog, cog_color=args.cog_color, debug=args.debug)
