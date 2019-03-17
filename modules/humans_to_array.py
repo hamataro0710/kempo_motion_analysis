@@ -21,7 +21,7 @@ def humans_to_array(humans):
             # centers[i] = center
             # cv2.circle(npimg, center, 3, common.CocoColors[i], thickness=3, lineType=8, shift=0)
         array_humans.append(array_human)
-    print(array_humans)
+    # print(array_humans)
     return np.array(array_humans)
 
 
