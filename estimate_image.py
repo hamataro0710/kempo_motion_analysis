@@ -38,7 +38,7 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
     image = common.read_imgfile(path_image, None, None)
     logger.debug('shape of image: ' + str(image.shape))
     h_pxl, w_pxl = image.shape[0], image.shape[1]
-    logger.debug(w_pxl, h_pxl)
+    logger.debug(str(w_pxl)+str(h_pxl))
     if image is None:
         logger.error('Image can not be read, path=%s' % path_image)
         sys.exit(-1)
