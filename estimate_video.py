@@ -53,10 +53,13 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
         e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
 
     cap = cv2.VideoCapture(path_movie_src)
+    if cap.isOpened() is False:
+        logger.info("ERROR: opening video stream or file")
+    logger.info("OPEN: %s" % path_movie_src)
     caps_fps = cap.get(cv2.CAP_PROP_FPS)
+
     if cog:
         ma = MotionAnalysis()
-
     # CSV FILE SETTING
     segments = ["Nose","Neck","RShoulder","RElbow","RWrist","LShoulder","LElbow","LWrist",
                 "RHip","RKnee","RAnkle","LHip","LKnee","LAnkle","REye","LEye","REar","LEar",
@@ -67,8 +70,6 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
     df_template = pd.DataFrame(columns=seg_columns)
     df_template.to_csv(csv_file, index=False)
 
-    if cap.isOpened() is False:
-        logger.info("ERROR: opening video stream or file")
     frame_no = 0
     # f = open(os.path.join(path_csv_estimated,"test.txt"), 'w')
     while cap.isOpened():
