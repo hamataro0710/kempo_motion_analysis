@@ -114,6 +114,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
             plt.savefig(os.path.join(path_png_estimated,
                                      video.split('.')[-2] + '{:06d}'.format(frame_no) + ".png"))
+            plt.close()
             plt.clf()
         frame_no += 1
         gc.collect()
