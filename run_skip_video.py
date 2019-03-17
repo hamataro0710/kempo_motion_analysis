@@ -4,6 +4,7 @@ import time
 import os
 import cv2
 import numpy as np
+import pandas as pd
 import subprocess
 import gc
 
@@ -33,6 +34,7 @@ def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_
     path_movie_out = os.path.join(path, 'movie_estimated')
     path_csv_estimated = os.path.join(path, 'data_estimated')
     path_png_estimated = os.path.join(path, 'png_estimated')
+    csv_file = os.path.join(path_csv_estimated, video.rsplit('.')[0])
     os.makedirs(path_movie_out, exist_ok=True)
     os.makedirs(path_png_estimated, exist_ok=True)
     os.makedirs(path_csv_estimated, exist_ok=True)
@@ -42,6 +44,10 @@ def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_
     cap = cv2.VideoCapture(path_movie_src)
     if cog:
         ma = MotionAnalysis()
+
+    # CSV FILE SETTING
+    # df_template = DataFrame(columns=['frame', '', 'score', 'x0', 'y0', 'x1', 'y1', 'objectName'])
+    # df_template.to_csv(csv_file, index=False)
 
     if cap.isOpened() is False:
         logger.info("ERROR: opening video stream or file")
@@ -69,7 +75,7 @@ def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_
         if cog:
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
-            logger.debug(str(bodies_cog))
+            # logger.debug(str(bodies_cog))
             plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=cog_color,
                         marker='o', s=150)
             plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
@@ -77,7 +83,10 @@ def estimate_video(video, path='', resolution='432x368', model='cmu',resize_out_
             humans_feature = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
                                              a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                              bodies_cog.reshape(bodies_cog.shape[0], bodies_cog.shape[1] * bodies_cog.shape[2])),axis=1)
-            print(humans_feature)
+            # print(humans_feature)
+            df_frame = pd.DataFrame(humans_feature)
+            df_frame.to_csv(csv_file, index=False, header=None, mode='a')
+
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
         plt.savefig(os.path.join(path_png_estimated,
