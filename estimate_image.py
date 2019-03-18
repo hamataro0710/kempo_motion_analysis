@@ -15,7 +15,7 @@ from modules.motion_analysis import MotionAnalysis
 
 
 def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_network=False,
-              cog=True, cog_color='black', debug=False, resize_out_ratio=4.0, vertical=False):
+              cog=True, cog_color='black', debug=False, resize_out_ratio=4.0, orientation='horizontal'):
     logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
@@ -121,9 +121,9 @@ if __name__ == '__main__':
     parser.add_argument('--cog', type=bool, default=True)
     parser.add_argument('--cog_color', type=str, default='black')
     parser.add_argument('--debug', type=bool, default=False)
-    parser.add_argument('--vertical', type=bool, default=False)
+    parser.add_argument('--orientation', type=bool, default="horizontal")
 
     args = parser.parse_args()
     estimate_image(imagefile=args.image, model=args.model, path=args.path, resize=args.resize,
                    resize_out_ratio=args.resize_out_ratio, plt_network=args.plt_network,
-                   cog=args.cog, cog_color=args.cog_color, debug=args.debug, vertical=args.vertical)
+                   cog=args.cog, cog_color=args.cog_color, debug=args.debug, orientation=args.orientation)

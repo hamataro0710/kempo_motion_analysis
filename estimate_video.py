@@ -152,7 +152,7 @@ if __name__ == '__main__':
     parser.add_argument('--start_frame', type=int, default=0)
     parser.add_argument('--cog', type=str, default="")
     parser.add_argument('--cog_color', type=str, default='black')
-    parser.add_argument('--resize-out-ratio', type=float, default=4.0,
+    parser.add_argument('--resize_out_ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--orientation', type=str, default="horizontal")
