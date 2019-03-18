@@ -27,7 +27,7 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
 
     w, h = model_wh(resize)
     if w == 0 or h == 0:
-        if not vertical:
+        if orientation == 'horizontal':
             e = TfPoseEstimator(get_graph_path(model), target_size=(432, 368))
         else:
             e = TfPoseEstimator(get_graph_path(model), target_size=(368, 432))
@@ -42,15 +42,13 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
     if image is None:
         logger.error('Image can not be read, path=%s' % path_image)
         sys.exit(-1)
-    logger.debug('shape of image: ' + str(image.shape))
     h_pxl, w_pxl = image.shape[0], image.shape[1]
-    logger.debug(str(w_pxl)+str(h_pxl))
 
     t = time.time()
     humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
     elapsed = time.time() - t
     logger.info('inference image: %s in %.4f seconds.' % (path_image, elapsed))
-    logger.debug('image size is %d, %d' % (w_pxl, h_pxl))
+    logger.debug('shape of image: ' + str(image.shape))
 
     if cog:
         ma = MotionAnalysis()

@@ -90,7 +90,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
         if (frame_no % int(caps_fps)) == 0:
             logger.info("Now estimating at:" + str(int(frame_no/caps_fps)) + "[sec]")
             logger.info('inference in %.4f seconds.' % (time_estimation))
-            logger.debug('image size is %d, %d' % (w_pxl, h_pxl))
+            logger.debug('shape of image: ' + str(image.shape))
         a_humans = humans_to_array(humans)
         logger.debug(str(a_humans))
 
