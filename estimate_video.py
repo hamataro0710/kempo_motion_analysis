@@ -21,7 +21,7 @@ fps_time = 0
 # if __name__ == '__main__':
 def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_ratio=4.0, orientation='horizontal',
                    cog="", cog_color='black', showBG=True, start_frame=0, debug=False, plot_image=""):
-    logger = logging.getLogger('TfPoseEstimator-Video')
+    logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG) if debug else ch.setLevel(logging.INFO)
@@ -85,7 +85,8 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             # humans = e.inference(image)
 
         t = time.time()
-        humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
+        # humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
+        humans = e.inference(image)
         time_estimation = time.time() - t
         if (frame_no % int(caps_fps)) == 0:
             logger.info("Now estimating at:" + str(int(frame_no/caps_fps)) + "[sec]")
