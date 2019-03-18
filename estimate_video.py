@@ -51,6 +51,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             e = TfPoseEstimator(get_graph_path(model), target_size=(368, 432))
     else:
         e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
+    logger.info('resize: %d,  %d' % (w, h))
 
     cap = cv2.VideoCapture(path_movie_src)
     logger.info("OPEN: %s" % path_movie_src)

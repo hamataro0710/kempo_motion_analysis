@@ -15,7 +15,7 @@ from modules.motion_analysis import MotionAnalysis
 
 
 def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_network=False,
-              cog=True, cog_color='black', debug=False, resize_out_ratio=4.0, orientation='horizontal'):
+              cog="", cog_color='black', debug=False, resize_out_ratio=4.0, orientation='horizontal'):
     logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
@@ -33,7 +33,7 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
             e = TfPoseEstimator(get_graph_path(model), target_size=(368, 432))
     else:
         e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
-
+    logger.info('resize: %d,  %d' % (w, h))
     path_image = os.path.join(path, 'pictures', imagefile)
     path_out = os.path.join(path, 'pictures')
 
@@ -50,14 +50,14 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
     logger.info('inference image: %s in %.4f seconds.' % (path_image, elapsed))
     logger.debug('shape of image: ' + str(image.shape))
 
-    if cog:
+    if cog != 'skip':
         ma = MotionAnalysis()
 
     image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
     if not plt_network:
         fig = plt.figure(figsize=(int(w_pxl/200), int(h_pxl/200)))
         plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        if cog:
+        if cog != 'skip':
             # bodies_cog = bodies_cog[~np.isnan(bodies_cog[:, :, 1])]
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
@@ -117,7 +117,7 @@ if __name__ == '__main__':
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
     parser.add_argument('--plt_network', type=bool, default=False)
     parser.add_argument('--path', type=str, default="")
-    parser.add_argument('--cog', type=bool, default=True)
+    parser.add_argument('--cog', type=str, default="")
     parser.add_argument('--cog_color', type=str, default='black')
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--orientation', type=bool, default="horizontal")
