@@ -39,12 +39,12 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
 
     # estimate human poses from a single image !
     image = common.read_imgfile(path_image, None, None)
-    logger.debug('shape of image: ' + str(image.shape))
-    h_pxl, w_pxl = image.shape[0], image.shape[1]
-    logger.debug(str(w_pxl)+str(h_pxl))
     if image is None:
         logger.error('Image can not be read, path=%s' % path_image)
         sys.exit(-1)
+    logger.debug('shape of image: ' + str(image.shape))
+    h_pxl, w_pxl = image.shape[0], image.shape[1]
+    logger.debug(str(w_pxl)+str(h_pxl))
 
     t = time.time()
     humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
