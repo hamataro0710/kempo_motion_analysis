@@ -50,6 +50,7 @@ def estimate_image(imagefile, model='cmu', path='', resize='432x368', plt_networ
     humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
     elapsed = time.time() - t
     logger.info('inference image: %s in %.4f seconds.' % (path_image, elapsed))
+    logger.debug('image size is %d, %d' % (w_pxl, h_pxl))
 
     if cog:
         ma = MotionAnalysis()
