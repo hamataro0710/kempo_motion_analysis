@@ -93,7 +93,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             logger.info('inference in %.4f seconds.' % (time_estimation))
             logger.debug('shape of image: ' + str(image.shape))
         a_humans = humans_to_array(humans)
-        logger.debug(str(a_humans))
+        # logger.debug(str(a_humans))
 
         if cog != 'skip':
             t = time.time()
