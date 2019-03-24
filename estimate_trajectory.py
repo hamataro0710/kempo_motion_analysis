@@ -73,9 +73,6 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
 
     frame_no = 0
     # f = open(os.path.join(path_csv_estimated,"test.txt"), 'w')
-    post_humans = np.array([])
-    post_id = np.array([])
-    df_humans = np.array([])
 
     while cap.isOpened():
         ret_val, image = cap.read()
@@ -119,6 +116,9 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             humans_id = range(len(a_humans))
             df_humans = np.concatenate((a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                         np.c_[humans_id]),axis=1)
+            post_humans = np.array([a_humans])
+            post_id = np.array([humans_id])
+
         else:
             humans_id = track_humans(a_humans, post_humans[-1], post_id[-1])
             df_humans_temp = np.concatenate((a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
