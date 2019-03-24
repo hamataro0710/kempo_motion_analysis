@@ -11,17 +11,13 @@ def track_humans(humans, prev_humans, prev_id):
     """
     # calculate humans points distances
     # 1.distance of body parts
-    # try:
-    # print(humans.shape, prev_humans.shape)
     distances = np.array([distance.cdist(humans[:, i, :2], prev_humans[:, i, :2]) for i in range(humans.shape[1])])
-    # except:
-    #     print(humans.shape, prev_humans.shape)
+
     # 2. search nearest body
     nearest_body_dist = np.nanmean(distances, axis=0)
     # nearest_body_num means previous frame's body's index from current ones
     nearest_body_num = np.argmin(np.nanmean(distances, axis=0), axis=1)
-    # print(nearest_body_num)
-    # print(prev_id)
+
     new_body_num = prev_id[nearest_body_num]
 
     duplicate_num = [item for item, count in Counter(nearest_body_num).items() if count > 1]
