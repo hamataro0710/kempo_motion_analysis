@@ -136,7 +136,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             break
     cv2.destroyAllWindows()
     logger.info("finish estimation & start encoding")
-    cmd = ["ffmpeg", "-r", "30", "-start_number", str(start_frame),
+    cmd = ["ffmpeg", "-r", str(caps_fps), "-start_number", str(start_frame),
            "-i", os.path.join(path_png_estimated,video.split('.')[-2] + "%06d.png"),
            "-vcodec", "libx264", "-pix_fmt", "yuv420p",
            os.path.join(path_movie_out, video.split('.')[-2] + ".mp4")]
