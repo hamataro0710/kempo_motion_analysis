@@ -70,9 +70,12 @@ def segment_cog(a_human):
     return ret_cog
 
 
+# tilt degree, base axis is Y
 def calc_degree(seg1, seg2):
     vec = np.array(seg1) - np.array(seg2)
-    degree = np.angle(vec[0] + vec[1] * 1j, deg=True)
+    degree = np.angle(vec[1] + vec[0] * 1j, deg=True)
+    return degree
+
 
 def segments_degree(a_human):
     degrees = []
