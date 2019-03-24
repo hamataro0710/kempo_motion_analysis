@@ -22,6 +22,8 @@ def track_humans(humans, prev_humans, prev_id):
     nearest_body_dist = np.nanmean(distances, axis=0)
     # nearest_body_num means previous frame's body's index from current ones
     nearest_body_num = np.argmin(np.nanmean(distances, axis=0), axis=1)
+    print(nearest_body_num)
+    print(prev_id)
     new_body_num = prev_id[nearest_body_num]
 
     duplicate_num = [item for item, count in Counter(nearest_body_num).items() if count > 1]
