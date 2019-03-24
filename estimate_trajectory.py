@@ -117,6 +117,8 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
         # to plot trajectory
         if frame_no == 0:
             humans_id = range(len(a_humans))
+            df_humans = np.concatenate((a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
+                                        np.c_[humans_id]),axis=1)
         else:
             humans_id = track_humans(a_humans, post_humans[-1], post_id[-1])
         df_humans_temp = np.concatenate((a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
