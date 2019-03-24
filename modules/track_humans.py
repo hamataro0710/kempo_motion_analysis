@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.spatial import distance
 from collections import Counter
-from modules.humans_to_array import segments_degree
 
 
 def track_humans(humans, prev_humans, prev_id):
@@ -10,16 +9,11 @@ def track_humans(humans, prev_humans, prev_id):
     :param :
     :return:
     """
-    # heights = [max(h[~np.isnan(h[:, 1])]) - min(h[~np.isnan(h[:, 1])]) for h in humans]
-    # stances = np.array([human[10, 0] - human[13, 0] for human in humans])
-    # torsos = np.array([segments_degree(human)[0] for human in humans])
-    # features = np.concatenate((heights, stances, torsos))
-
     # calculate humans points distances
     # 1.distance of body parts
     # try:
-    print(humans.shape, prev_humans.shape)
-    distances = np.array([distance.cdist(humans[:, i, :2], prev_humans[:, i, :2]) for i in humans.shape[1]])
+    # print(humans.shape, prev_humans.shape)
+    distances = np.array([distance.cdist(humans[:, i, :2], prev_humans[:, i, :2]) for i in range(18)])
     # except:
     #     print(humans.shape, prev_humans.shape)
     # 2. search nearest body

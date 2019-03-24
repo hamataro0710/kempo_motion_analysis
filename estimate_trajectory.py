@@ -130,8 +130,6 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             df_humans = np.concatenate((df_humans[df_humans[:, 0] > (frame_no - 30)], df_humans_temp))
         post_humans = a_humans
 
-        if frame_no == 10:
-            print(df_humans)
         if plot_image != 'skip':
             plt.figure(figsize=(int(w_pxl / 50), int(h_pxl / 50)))
             if not showBG:
