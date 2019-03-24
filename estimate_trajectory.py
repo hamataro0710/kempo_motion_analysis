@@ -20,8 +20,8 @@ fps_time = 0
 
 
 # if __name__ == '__main__':
-def estimate_video(video, path='', resize='432x368', model='cmu', resize_out_ratio=4.0, orientation='horizontal',
-                   cog="", cog_color='black', showBG=True, start_frame=0, debug=False, plot_image=""):
+def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_out_ratio=4.0, orientation='horizontal',
+                   cog="skip", cog_color='black', showBG=True, start_frame=0, debug=False, plot_image=""):
     logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
