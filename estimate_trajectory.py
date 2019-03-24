@@ -21,7 +21,7 @@ fps_time = 0
 
 # if __name__ == '__main__':
 def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_out_ratio=4.0, orientation='horizontal',
-                   cog="skip", cog_color='black', showBG=True, start_frame=0, debug=False, plot_image=""):
+                   cog="skip", cog_color='black', cog_size='M', showBG=True, start_frame=0, debug=False, plot_image=""):
     logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
@@ -73,9 +73,12 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
     df_template = pd.DataFrame(columns=seg_columns)
     df_template.to_csv(csv_file, index=False)
 
-    frame_no = 0
-    # f = open(os.path.join(path_csv_estimated,"test.txt"), 'w')
+    if (cog_size == "s") or (cog_size == "S"):
+        cog_size = 10000
+    else:
+        cog_size = 20000
 
+    frame_no = 0
     while cap.isOpened():
         ret_val, image = cap.read()
         if not ret_val:
@@ -95,7 +98,7 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
 
         if (frame_no % int(caps_fps)) == 0:
             logger.info("Now estimating at:" + str(int(frame_no / caps_fps)) + "[sec]")
-            logger.info('inference in %.4f seconds.' % (time_estimation))
+            logger.info('inference in %.4f seconds.' % time_estimation)
             logger.debug('shape of image: ' + str(image.shape))
             logger.debug(str(a_humans))
 
@@ -111,7 +114,7 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             df_frame.to_csv(csv_file, index=False, header=None, mode='a')
             time_cog = time.time() - t
             if frame_no % int(caps_fps) == 0:
-                logger.info('calculation in %.4f seconds.' % (time_cog))
+                logger.info('calculation in %.4f seconds.' % time_cog)
 
         # to plot trajectory
         if frame_no == 0:
@@ -131,7 +134,8 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
         post_humans = a_humans
 
         if plot_image != 'skip':
-            plt.figure(figsize=(int(w_pxl / 50), int(h_pxl / 50)))
+            fig_resize = 100
+            plt.figure(figsize=(int(w_pxl / fig_resize), int(h_pxl / fig_resize)))
             if not showBG:
                 image = np.zeros(image.shape)
             image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
@@ -139,15 +143,15 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
             if cog != 'skip':
                 plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=cog_color,
-                            marker='o', s=150)
+                            marker='o', s=cog_size/fig_resize)
                 plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
                 plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
 
             # plt.plot(df_humans)
             for hum in np.sort(humans_id):
                 df_human = df_humans[df_humans[:, -1] == hum]
-                plt.plot(df_human[:, 4 * 3 + 1] * w_pxl, df_human[:, 4 * 3 + 2] * h_pxl, linewidth=4)
-                plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl, linewidth=4)
+                plt.plot(df_human[:, 4 * 3 + 1] * w_pxl, df_human[:, 4 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
+                plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
 
             # print(humans_feature)
             plt.ylim(h_pxl, 0)

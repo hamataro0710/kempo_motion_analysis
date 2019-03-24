@@ -13,7 +13,7 @@ def track_humans(humans, prev_humans, prev_id):
     # 1.distance of body parts
     # try:
     # print(humans.shape, prev_humans.shape)
-    distances = np.array([distance.cdist(humans[:, i, :2], prev_humans[:, i, :2]) for i in range(18)])
+    distances = np.array([distance.cdist(humans[:, i, :2], prev_humans[:, i, :2]) for i in range(humans.shape[1])])
     # except:
     #     print(humans.shape, prev_humans.shape)
     # 2. search nearest body
