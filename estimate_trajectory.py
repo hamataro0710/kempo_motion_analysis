@@ -122,14 +122,12 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             df_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
                                         a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                         np.c_[humans_id]), axis=1)
-            # post_id = np.array(humans_id)
 
         else:
             humans_id = track_humans(a_humans, post_humans, humans_id)
             df_humans_temp = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
                                              a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                              np.c_[humans_id]), axis=1)
-            #             df_humans = np.concatenate((df_humans, df_humans_temp))
             df_humans = np.concatenate((df_humans[df_humans[:, 0] > (frame_no - 30)], df_humans_temp))
         post_humans = a_humans
 
@@ -165,11 +163,6 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
 
         # before increment, renew some args
         frame_no += 1
-        # post_id = np.concatenate((post_id, np.c_[humans_id]))
-        # post_humans = np.concatenate((post_humans,a_humans), axis=1)
-        if len(post_humans) > 30:
-            post_id = np.delete(post_id, 0)
-            post_humans = np.delete(post_humans, 0)
         gc.collect()
         if cv2.waitKey(1) == 27:
             break
