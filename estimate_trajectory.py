@@ -108,7 +108,7 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             df_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
                                         a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                         np.c_[humans_id]), axis=1)
-            id_column = df_humans.shape[1]
+            id_column = df_humans.shape[1] - 1
 
         else:
             humans_id = track_humans(a_humans, post_humans, humans_id)
