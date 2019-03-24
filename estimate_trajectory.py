@@ -15,11 +15,12 @@ from tf_pose.networks import get_graph_path, model_wh
 from modules.humans_to_array import humans_to_array
 from modules.motion_analysis import MotionAnalysis
 from modules.track_humans import track_humans
+
 fps_time = 0
 
 
 # if __name__ == '__main__':
-def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_ratio=4.0, orientation='horizontal',
+def estimate_video(video, path='', resize='432x368', model='cmu', resize_out_ratio=4.0, orientation='horizontal',
                    cog="", cog_color='black', showBG=True, start_frame=0, debug=False, plot_image=""):
     logger = logging.getLogger('TfPoseEstimator')
     logger.setLevel(logging.DEBUG) if debug else logger.setLevel(logging.INFO)
@@ -62,10 +63,11 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
     logger.info('MODE: Plot Center of Gravity')
     ma = MotionAnalysis()
     # CSV FILE SETTING
-    segments = ["Nose","Neck","RShoulder","RElbow","RWrist","LShoulder","LElbow","LWrist",
-                "RHip","RKnee","RAnkle","LHip","LKnee","LAnkle","REye","LEye","REar","LEar",
-                "head_cog", "torso_cog","r_thigh_cog", "l_thigh_cog","r_leg_cog", "l_leg_cog","r_foot_cog", "l_foot_cog",
-                "r_arm_cog", "l_arm_cog","r_forearm_cog", "l_forearm_cog", "r_hand_cog", "l_hand_cog"]
+    segments = ["Nose", "Neck", "RShoulder", "RElbow", "RWrist", "LShoulder", "LElbow", "LWrist",
+                "RHip", "RKnee", "RAnkle", "LHip", "LKnee", "LAnkle", "REye", "LEye", "REar", "LEar",
+                "head_cog", "torso_cog", "r_thigh_cog", "l_thigh_cog", "r_leg_cog", "l_leg_cog", "r_foot_cog",
+                "l_foot_cog",
+                "r_arm_cog", "l_arm_cog", "r_forearm_cog", "l_forearm_cog", "r_hand_cog", "l_hand_cog"]
     seg_columns = ['frame']
     [seg_columns.extend([x + '_x', x + '_y', x + '_score']) for x in segments]
     df_template = pd.DataFrame(columns=seg_columns)
@@ -92,11 +94,10 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
         a_humans = humans_to_array(humans)
 
         if (frame_no % int(caps_fps)) == 0:
-            logger.info("Now estimating at:" + str(int(frame_no/caps_fps)) + "[sec]")
+            logger.info("Now estimating at:" + str(int(frame_no / caps_fps)) + "[sec]")
             logger.info('inference in %.4f seconds.' % (time_estimation))
             logger.debug('shape of image: ' + str(image.shape))
             logger.debug(str(a_humans))
-
 
         if cog != 'skip':
             t = time.time()
@@ -104,7 +105,8 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
             humans_feature = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
                                              a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
-                                             bodies_cog.reshape(bodies_cog.shape[0], bodies_cog.shape[1] * bodies_cog.shape[2])),axis=1)
+                                             bodies_cog.reshape(bodies_cog.shape[0],
+                                                                bodies_cog.shape[1] * bodies_cog.shape[2])), axis=1)
             df_frame = pd.DataFrame(humans_feature.round(4))
             df_frame.to_csv(csv_file, index=False, header=None, mode='a')
             time_cog = time.time() - t
@@ -113,22 +115,25 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
 
         # to plot trajectory
         if frame_no == 0:
-            humans_id = range(len(a_humans))
-            df_humans = np.concatenate((a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
-                                        np.c_[humans_id]),axis=1)
-            post_humans = np.array([a_humans])
+            humans_id = np.array(range(len(a_humans)))
+            df_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
+                                        a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
+                                        np.c_[humans_id]), axis=1)
             # post_id = np.array(humans_id)
 
         else:
-            humans_id = track_humans(a_humans, post_humans[-1], humans_id)
-            df_humans_temp = np.concatenate((a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
-                                             np.c_[humans_id]),axis=1)
-            df_humans = np.concatenate((df_humans, df_humans_temp),axis=1)
+            humans_id = track_humans(a_humans, post_humans, humans_id)
+            df_humans_temp = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
+                                             a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
+                                             np.c_[humans_id]), axis=1)
+            #             df_humans = np.concatenate((df_humans, df_humans_temp))
+            df_humans = np.concatenate((df_humans[df_humans[:, 0] > (frame_no - 30)], df_humans_temp))
+        post_humans = a_humans
 
         if frame_no == 10:
             print(df_humans)
         if plot_image != 'skip':
-            plt.figure(figsize=(int(w_pxl / 200), int(h_pxl / 200)))
+            plt.figure(figsize=(int(w_pxl / 50), int(h_pxl / 50)))
             if not showBG:
                 image = np.zeros(image.shape)
             image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
@@ -141,6 +146,9 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
                 plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
 
             # plt.plot(df_humans)
+            for hum in np.sort(humans_id):
+                df_human = df_humans[df_humans[:, -1] == hum]
+                plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl)
 
             # print(humans_feature)
             plt.ylim(h_pxl, 0)
