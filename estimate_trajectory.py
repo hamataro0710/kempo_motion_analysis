@@ -124,7 +124,8 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
             # humans_feature = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
             #                                  a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
-            humans_feature = np.concatenate((df_humans,
+            #                                  np.c_[humans_id],
+            humans_feature = np.concatenate((df_humans_temp,
                                              bodies_cog.reshape(bodies_cog.shape[0],
                                                                 bodies_cog.shape[1] * bodies_cog.shape[2])), axis=1)
             df_frame = pd.DataFrame(humans_feature.round(4))
