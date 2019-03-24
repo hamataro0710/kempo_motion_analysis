@@ -153,7 +153,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
 
         # before increment, renew some args
         frame_no += 1
-        post_id = np.cocantenate((post_id, humans_id), axis=1)
+        post_id = np.concatenate((post_id, humans_id), axis=1)
         post_humans = np.concatenate((post_humans,a_humans), axis=1)
         if len(post_humans) > 30:
             post_id = np.delete(post_id, 0)
