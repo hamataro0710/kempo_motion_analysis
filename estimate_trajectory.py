@@ -121,7 +121,7 @@ def estimate_video(video, path='', resize='432x368', model='cmu',resize_out_rati
             humans_id = track_humans(a_humans, post_humans[-1], post_id[-1])
         df_humans_temp = np.concatenate((a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                          np.c_[humans_id]),axis=1)
-        df_humans = np.cocantenate((df_humans, df_humans_temp))
+        df_humans = np.concatenate((df_humans, df_humans_temp))
         if frame_no == 10:
             print(df_humans)
         if plot_image != 'skip':
