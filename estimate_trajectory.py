@@ -186,6 +186,7 @@ if __name__ == '__main__':
     parser.add_argument('--start_frame', type=int, default=0)
     parser.add_argument('--cog', type=str, default="")
     parser.add_argument('--cog_color', type=str, default='black')
+    parser.add_argument('--cog_size', type=str, default='M')
     parser.add_argument('--resize_out_ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
     parser.add_argument('--debug', type=bool, default=False)
@@ -194,6 +195,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(str(args.cog))
     estimate_trajectory(video=args.video, path=args.path, resize=args.resize, model=args.model, orientation=args.orientation,
-                   resize_out_ratio=args.resize_out_ratio, showBG=args.showBG, plot_image=args.plot_image,
-                   cog=args.cog, cog_color=args.cog_color, start_frame=args.start_frame, debug=args.debug)
+                        resize_out_ratio=args.resize_out_ratio, showBG=args.showBG, plot_image=args.plot_image,
+                        cog=args.cog, cog_color=args.cog_color, cog_size=args.cog_size, start_frame=args.start_frame, debug=args.debug)
 
