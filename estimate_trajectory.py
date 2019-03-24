@@ -198,7 +198,7 @@ if __name__ == '__main__':
     parser.add_argument('--plot_image', type=str, default="")
     args = parser.parse_args()
     print(str(args.cog))
-    estimate_video(video=args.video, path=args.path, resize=args.resize, model=args.model, orientation=args.orientation,
+    estimate_trajectory(video=args.video, path=args.path, resize=args.resize, model=args.model, orientation=args.orientation,
                    resize_out_ratio=args.resize_out_ratio, showBG=args.showBG, plot_image=args.plot_image,
                    cog=args.cog, cog_color=args.cog_color, start_frame=args.start_frame, debug=args.debug)
 
