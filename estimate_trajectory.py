@@ -102,26 +102,13 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             logger.debug('shape of image: ' + str(image.shape))
             logger.debug(str(a_humans))
 
-        if cog != 'skip':
-            t = time.time()
-            bodies_cog = ma.multi_bodies_cog(humans=humans)
-            bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
-            humans_feature = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
-                                             a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
-                                             bodies_cog.reshape(bodies_cog.shape[0],
-                                                                bodies_cog.shape[1] * bodies_cog.shape[2])), axis=1)
-            df_frame = pd.DataFrame(humans_feature.round(4))
-            df_frame.to_csv(csv_file, index=False, header=None, mode='a')
-            time_cog = time.time() - t
-            if frame_no % int(caps_fps) == 0:
-                logger.info('calculation in %.4f seconds.' % time_cog)
-
-        # to plot trajectory
-        if frame_no == 0:
+        # track human
+        if frame_no == start_frame:
             humans_id = np.array(range(len(a_humans)))
             df_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
                                         a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                         np.c_[humans_id]), axis=1)
+            id_column = df_humans.shape[1]
 
         else:
             humans_id = track_humans(a_humans, post_humans, humans_id)
@@ -130,6 +117,21 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
                                              np.c_[humans_id]), axis=1)
             df_humans = np.concatenate((df_humans[df_humans[:, 0] > (frame_no - 30)], df_humans_temp))
         post_humans = a_humans
+
+        if cog != 'skip':
+            t = time.time()
+            bodies_cog = ma.multi_bodies_cog(humans=humans)
+            bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
+            # humans_feature = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
+            #                                  a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
+            humans_feature = np.concatenate((df_humans,
+                                             bodies_cog.reshape(bodies_cog.shape[0],
+                                                                bodies_cog.shape[1] * bodies_cog.shape[2])), axis=1)
+            df_frame = pd.DataFrame(humans_feature.round(4))
+            df_frame.to_csv(csv_file, index=False, header=None, mode='a')
+            time_cog = time.time() - t
+            if frame_no % int(caps_fps) == 0:
+                logger.info('calculation in %.4f seconds.' % time_cog)
 
         if plot_image != 'skip':
             fig_resize = 100
@@ -145,13 +147,11 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
                 plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
                 plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
 
-            # plt.plot(df_humans)
             for hum in np.sort(humans_id):
-                df_human = df_humans[df_humans[:, -1] == hum]
+                df_human = df_humans[df_humans[:, id_column] == hum]
                 plt.plot(df_human[:, 4 * 3 + 1] * w_pxl, df_human[:, 4 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
                 plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
 
-            # print(humans_feature)
             plt.ylim(h_pxl, 0)
 
             bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
