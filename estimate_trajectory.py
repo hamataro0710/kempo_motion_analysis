@@ -137,7 +137,7 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             if not showBG:
                 image = np.zeros(image.shape)
             image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
-            # logger.debug(str(bodies_cog))
+
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
             if cog != 'skip':
                 plt.scatter(bodies_cog[:, 14, 0] * w_pxl, bodies_cog[:, 14, 1] * h_pxl, color=cog_color,
@@ -169,7 +169,7 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
     cv2.destroyAllWindows()
     logger.info("finish estimation & start encoding")
     cmd = ["ffmpeg", "-r", "30", "-start_number", str(start_frame),
-           "-i", os.path.join(path_png_estimated,video.split('.')[-2] + "%06d.png"),
+           "-i", os.path.join(path_png_estimated, video.split('.')[-2] + "%06d.png"),
            "-vcodec", "libx264", "-pix_fmt", "yuv420p",
            os.path.join(path_movie_out, video.split('.')[-2] + ".mp4")]
     subprocess.call(cmd)
