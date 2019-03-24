@@ -148,7 +148,8 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             # plt.plot(df_humans)
             for hum in np.sort(humans_id):
                 df_human = df_humans[df_humans[:, -1] == hum]
-                plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl)
+                plt.plot(df_human[:, 4 * 3 + 1] * w_pxl, df_human[:, 4 * 3 + 2] * h_pxl, linewidth=4)
+                plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl, linewidth=4)
 
             # print(humans_feature)
             plt.ylim(h_pxl, 0)

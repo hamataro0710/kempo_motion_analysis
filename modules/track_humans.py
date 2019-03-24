@@ -27,8 +27,8 @@ def track_humans(humans, prev_humans, prev_id):
     new_body_num = prev_id[nearest_body_num]
 
     duplicate_num = [item for item, count in Counter(nearest_body_num).items() if count > 1]
-    # diff in 1 frame should be less than 5% of the pixels
-    new_body_idx = np.where(nearest_body_dist[0, nearest_body_num] > 0.0025)[0]
+    # diff in 1 frame should be less than 3% of the pixels
+    new_body_idx = np.where(nearest_body_dist[0, nearest_body_num] > 0.0009)[0]
     if len(duplicate_num):
         for idx in duplicate_num:
             target_num =np.where(nearest_body_num==idx)
