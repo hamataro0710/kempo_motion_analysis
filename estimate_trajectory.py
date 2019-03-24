@@ -171,7 +171,7 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
     cmd = ["ffmpeg", "-r", "30", "-start_number", str(start_frame),
            "-i", os.path.join(path_png_estimated, video.split('.')[-2] + "%06d.png"),
            "-vcodec", "libx264", "-pix_fmt", "yuv420p",
-           os.path.join(path_movie_out, video.split('.')[-2] + ".mp4")]
+           os.path.join(path_movie_out, video.split('.')[-2] + "_track.mp4")]
     subprocess.call(cmd)
     logger.debug('finished+')
 
