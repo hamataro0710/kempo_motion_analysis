@@ -28,5 +28,5 @@ def track_humans(humans, prev_humans, prev_id):
             target_num =np.where(nearest_body_num==idx)
             correct_idx = np.argmin(nearest_body_dist[target_num, idx])
             new_body_idx = np.concatenate((new_body_idx, np.delete(target_num, correct_idx))).astype('int')
-        new_body_num[new_body_idx] = range(max(prev_id) + 1, max(new_body_num) + 1 + len(new_body_idx))
+        new_body_num[new_body_idx] = range(max(prev_id) + 1, max(prev_id) + 1 + len(new_body_idx))
     return new_body_num
