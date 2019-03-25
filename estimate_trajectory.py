@@ -64,7 +64,7 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
     ma = MotionAnalysis()
     # CSV FILE SETTING
     segments = ["Nose", "Neck", "RShoulder", "RElbow", "RWrist", "LShoulder", "LElbow", "LWrist",
-                "RHip", "RKnee", "RAnkle", "LHip", "LKnee", "LAnkle", "REye", "LEye", "REar", "LEar",
+                "RHip", "RKnee", "RAnkle", "LHip", "LKnee", "LAnkle", "REye", "LEye", "REar", "LEar", "human_id",
                 "head_cog", "torso_cog", "r_thigh_cog", "l_thigh_cog", "r_leg_cog", "l_leg_cog", "r_foot_cog",
                 "l_foot_cog",
                 "r_arm_cog", "l_arm_cog", "r_forearm_cog", "l_forearm_cog", "r_hand_cog", "l_hand_cog"]
@@ -73,11 +73,13 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
     df_template = pd.DataFrame(columns=seg_columns)
     df_template.to_csv(csv_file, index=False)
 
+    # change marker size of cog
     if (cog_size == "s") or (cog_size == "S"):
         cog_size = 10000
     else:
         cog_size = 20000
 
+    # processing video
     frame_no = 0
     while cap.isOpened():
         ret_val, image = cap.read()
@@ -88,14 +90,14 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
         if frame_no < start_frame:
             frame_no += 1
             continue
-            # humans = e.inference(image)
 
+        # estimate pose
         t = time.time()
         humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
-        # humans = e.inference(image)
         time_estimation = time.time() - t
         a_humans = humans_to_array(humans)
 
+        # check the time to estimation
         if (frame_no % int(caps_fps)) == 0:
             logger.info("Now estimating at:" + str(int(frame_no / caps_fps)) + "[sec]")
             logger.info('inference in %.4f seconds.' % time_estimation)
@@ -104,35 +106,33 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
 
         # track human
         if frame_no == start_frame:
+            # initialize
             humans_id = np.array(range(len(a_humans)))
-            df_humans_temp = df_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
+            np_humans_current = np_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
                                         a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                         np.c_[humans_id]), axis=1)
-            id_column = df_humans.shape[1] - 1
-
+            clm_of_id = np_humans.shape[1] - 1
         else:
             humans_id = track_humans(a_humans, post_humans, humans_id)
-            df_humans_temp = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
+            np_humans_current = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
                                              a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
                                              np.c_[humans_id]), axis=1)
-            df_humans = np.concatenate((df_humans[df_humans[:, 0] > (frame_no - 30)], df_humans_temp))
+            np_humans = np.concatenate((np_humans[np_humans[:, 0] > (frame_no - 30)], np_humans_current))
         post_humans = a_humans
 
+        # calculate center of gravity
         if cog != 'skip':
             t = time.time()
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
-            # humans_feature = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
-            #                                  a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
-            #                                  np.c_[humans_id],
-            humans_feature = np.concatenate((df_humans_temp,
+            humans_feature = np.concatenate((np_humans_current,
                                              bodies_cog.reshape(bodies_cog.shape[0],
                                                                 bodies_cog.shape[1] * bodies_cog.shape[2])), axis=1)
             df_frame = pd.DataFrame(humans_feature.round(4))
             df_frame.to_csv(csv_file, index=False, header=None, mode='a')
             time_cog = time.time() - t
             if frame_no % int(caps_fps) == 0:
-                logger.info('calculation in %.4f seconds.' % time_cog)
+                logger.info('calculation of cog in %.4f seconds.' % time_cog)
 
         if plot_image != 'skip':
             fig_resize = 100
@@ -148,15 +148,16 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
                 plt.vlines(bodies_cog[:, 6, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
                 plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
 
+            # plot trajectories r_wrist:4, l_wrist:7
             for hum in np.sort(humans_id):
-                df_human = df_humans[df_humans[:, id_column] == hum]
+                df_human = np_humans[np_humans[:, clm_of_id] == hum]
                 plt.plot(df_human[:, 4 * 3 + 1] * w_pxl, df_human[:, 4 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
                 plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
 
             plt.ylim(h_pxl, 0)
 
-            bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
-            bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
+            # bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
+            # bgimg = cv2.resize(bgimg, (e.heatMat.shape[1], e.heatMat.shape[0]), interpolation=cv2.INTER_AREA)
             plt.savefig(os.path.join(path_png_estimated,
                                      video.split('.')[-2] + '{:06d}'.format(frame_no) + ".png"))
             plt.close()

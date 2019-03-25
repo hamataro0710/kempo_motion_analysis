@@ -19,20 +19,20 @@ class MotionAnalysis():
         self.height = height
         self.weight = weight
     # body_length:
-        self.foot_length = 0.26 /1.70 * self.height
-        self.leg_length = 0.43 /1.70 * self.height  # from ankle to knee
-        self.thigh_length = 0.43 /1.70 * self.height # from knee to troachanter
-        self.torso_length = 0.5 /1.70 * self.height  # from trochanter to neck
-        self.head_length = 0.28 /1.70 * self.height # from neck to head-top
-        self.arm_length = 0.3 /1.70 * self.height
-        self.forearm_length = 0.25 /1.70 * self.height
-        self.hand_length = 0.19 /1.70 * self.height
+        self.foot_length = 0.26 / 1.70 * self.height
+        self.leg_length = 0.43 / 1.70 * self.height  # from ankle to knee
+        self.thigh_length = 0.43 / 1.70 * self.height  # from knee to troachanter
+        self.torso_length = 0.5 / 1.70 * self.height  # from trochanter to neck
+        self.head_length = 0.28 / 1.70 * self.height  # from neck to head-top
+        self.arm_length = 0.3 / 1.70 * self.height
+        self.forearm_length = 0.25 / 1.70 * self.height
+        self.hand_length = 0.19 / 1.70 * self.height
     # body_weight:
-        self.foot_weight =  -0.26784 + 2.61804 * self.foot_length  + 0.00545*self.weight
-        self.leg_weight =  -1.71524 + 6.04396 * self.leg_length   + 0.03885*self.weight
-        self.thigh_weight =  -4.53542 + 14.5253 * self.thigh_length + 0.09324*self.weight
-        self.pelvis_weight = (-10.1647 + 18.7503 * self.torso_length + 0.48275*self.weight) * (163/592)#座位時の肩峰高/超骨稜高
-        self.head_weight =  -1.1968 + 25.9526 * self.head_length  + 0.02604*self.weight
+        self.foot_weight = -0.26784 + 2.61804 * self.foot_length + 0.00545 * self.weight
+        self.leg_weight = -1.71524 + 6.04396 * self.leg_length + 0.03885 * self.weight
+        self.thigh_weight = -4.53542 + 14.5253 * self.thigh_length + 0.09324 * self.weight
+        self.pelvis_weight = (-10.1647 + 18.7503 * self.torso_length + 0.48275 * self.weight) * (163/592)#座位時の肩峰高/超骨稜高
+        self.head_weight = -1.1968 + 25.9526 * self.head_length + 0.02604 * self.weight
         self.arm_weight = -0.36785 + 1.15588 * self.arm_length + 0.02712 * self.weight
         self.forearm_weight = -0.43807 + 2.22923 * self.forearm_length + 0.01397 * self.weight
         self.hand_weight = -0.01474 + 2.09424 * self.hand_length + 0.00414 * self.weight
