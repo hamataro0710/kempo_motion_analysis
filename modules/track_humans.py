@@ -42,14 +42,14 @@ class TrackHumans:
 
         # 2. search nearest body
         nearest_body_dist = np.nanmean(distances, axis=0)
-        nearest_body_dist[np.isnan(nearest_body_dist)] = 1
+        nearest_body_dist[np.isnan(nearest_body_dist)] = 1  # set 1(over threshold)
         # nearest_body_num means previous frame's body's index from current ones
         nearest_body_num = np.nanargmin(nearest_body_dist, axis=1)
         # sort previous ids
         current_id = prev_id[nearest_body_num]
 
         # diff in 1 frame should be less than 15% of the pixels
-        new_appearance = np.where(nearest_body_dist[0, nearest_body_num] > 0.15)[0]
+        new_appearance = np.where(nearest_body_dist[0, nearest_body_num] > 0.20)[0]
         # check the duplication of nearest body num
         duplicate_num = [item for item, count in Counter(nearest_body_num).items() if count > 1]
         if len(duplicate_num):
