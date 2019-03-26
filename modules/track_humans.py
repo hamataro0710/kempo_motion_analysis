@@ -41,7 +41,7 @@ class TrackHumans:
         current_id = prev_id[nearest_body_num]
 
         # diff in 1 frame should be less than 15% of the pixels
-        new_appearance = np.where(nearest_body_dist[0, nearest_body_num] > 0.0225)[0]
+        new_appearance = np.where(nearest_body_dist[0, nearest_body_num] > 0.15)[0]
         # check the duplication of nearest body num
         duplicate_num = [item for item, count in Counter(nearest_body_num).items() if count > 1]
         if len(duplicate_num):
