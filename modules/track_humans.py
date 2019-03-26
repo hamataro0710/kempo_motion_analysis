@@ -22,10 +22,11 @@ class TrackHumans:
             self.humans_tracklet = self.humans_current
             self.clm_num = self.humans_current.shape[1] - 1
         else:
-            self.humans_id = self.search_nearest(humans, self.humans_current, self.humans_id)
+            self.humans_id = self.search_nearest(humans, self.humans_post, self.humans_id)
             self.humans_current = np.concatenate((humans_current, np.c_[self.humans_id]), axis=1)
             self.humans_tracklet = np.concatenate((self.humans_tracklet[self.humans_tracklet[:, 0] > (frame - 30)],
                                                    self.humans_current))
+            self.humans_post = humans
 
     @staticmethod
     def search_nearest(humans, prev_humans, prev_id):
