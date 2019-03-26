@@ -6,6 +6,11 @@ from collections import Counter
 class TrackHumans:
     def __init__(self, start_frame=0,):
         self.start = start_frame
+        self.humans_id = None
+        self.humans_current = None
+        self.humans_tracklet = None
+        self.clm_num = None
+        self.humans_post = None
 
     def track_humans(self, frame, humans):
         """
