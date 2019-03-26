@@ -38,7 +38,7 @@ class TrackHumans:
         # 2. search nearest body
         nearest_body_dist = np.nanmean(distances, axis=0)
         # nearest_body_num means previous frame's body's index from current ones
-        nearest_body_num = np.argmin(np.nanmean(distances, axis=0), axis=1)
+        nearest_body_num = np.nanargmin(nearest_body_dist, axis=1)
         # sort previous ids
         current_id = prev_id[nearest_body_num]
 

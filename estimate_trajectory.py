@@ -96,31 +96,31 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
         t = time.time()
         humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=resize_out_ratio)
         time_estimation = time.time() - t
-        a_humans = humans_to_array(humans)
+        array_humans = humans_to_array(humans)
 
         # check the time to estimation
         if (frame_no % int(caps_fps)) == 0:
             logger.info("Now estimating at:" + str(int(frame_no / caps_fps)) + "[sec]")
             logger.info('inference in %.4f seconds.' % time_estimation)
             logger.debug('shape of image: ' + str(image.shape))
-            logger.debug(str(a_humans))
+            logger.debug(str(array_humans))
 
         # track human
         # if frame_no == start_frame:
         #     # initialize
-        #     humans_id = np.array(range(len(a_humans)))
-        #     np_humans_current = np_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
-        #                                 a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
+        #     humans_id = np.array(range(len(array_humans)))
+        #     np_humans_current = np_humans = np.concatenate((np.c_[np.repeat(frame_no, len(array_humans))],
+        #                                 array_humans.reshape(array_humans.shape[0], array_humans.shape[1] * array_humans.shape[2]),
         #                                 np.c_[humans_id]), axis=1)
         #     clm_of_id = np_humans.shape[1] - 1
         # else:
-        #     humans_id = track_humans(a_humans, post_humans, humans_id)
-        #     np_humans_current = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
-        #                                      a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
+        #     humans_id = track_humans(array_humans, post_humans, humans_id)
+        #     np_humans_current = np.concatenate((np.c_[np.repeat(frame_no, len(array_humans))],
+        #                                      array_humans.reshape(array_humans.shape[0], array_humans.shape[1] * array_humans.shape[2]),
         #                                      np.c_[humans_id]), axis=1)
         #     np_humans = np.concatenate((np_humans[np_humans[:, 0] > (frame_no - 30)], np_humans_current))
-        # post_humans = a_humans
-        track.track_humans(frame_no, a_humans)
+        # post_humans = array_humans
+        track.track_humans(frame_no, array_humans)
 
         # calculate center of gravity
         if cog != 'skip':
