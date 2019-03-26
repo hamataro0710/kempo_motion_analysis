@@ -14,8 +14,8 @@ from tf_pose.networks import get_graph_path, model_wh
 # from tf_pose.common import CocoPart
 from modules.humans_to_array import humans_to_array
 from modules.motion_analysis import MotionAnalysis
-from modules.track_humans import track_humans
-
+# from modules.track_humans import track_humans
+from modules.track_humans import TrackHumans
 fps_time = 0
 
 
@@ -81,6 +81,7 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
 
     # processing video
     frame_no = 0
+    track = TrackHumans(start_frame=start_frame)
     while cap.isOpened():
         ret_val, image = cap.read()
         if not ret_val:
@@ -105,27 +106,28 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
             logger.debug(str(a_humans))
 
         # track human
-        if frame_no == start_frame:
-            # initialize
-            humans_id = np.array(range(len(a_humans)))
-            np_humans_current = np_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
-                                        a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
-                                        np.c_[humans_id]), axis=1)
-            clm_of_id = np_humans.shape[1] - 1
-        else:
-            humans_id = track_humans(a_humans, post_humans, humans_id)
-            np_humans_current = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
-                                             a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
-                                             np.c_[humans_id]), axis=1)
-            np_humans = np.concatenate((np_humans[np_humans[:, 0] > (frame_no - 30)], np_humans_current))
-        post_humans = a_humans
+        # if frame_no == start_frame:
+        #     # initialize
+        #     humans_id = np.array(range(len(a_humans)))
+        #     np_humans_current = np_humans = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
+        #                                 a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
+        #                                 np.c_[humans_id]), axis=1)
+        #     clm_of_id = np_humans.shape[1] - 1
+        # else:
+        #     humans_id = track_humans(a_humans, post_humans, humans_id)
+        #     np_humans_current = np.concatenate((np.c_[np.repeat(frame_no, len(a_humans))],
+        #                                      a_humans.reshape(a_humans.shape[0], a_humans.shape[1] * a_humans.shape[2]),
+        #                                      np.c_[humans_id]), axis=1)
+        #     np_humans = np.concatenate((np_humans[np_humans[:, 0] > (frame_no - 30)], np_humans_current))
+        # post_humans = a_humans
+        track.track_humans(frame_no,a_humans)
 
         # calculate center of gravity
         if cog != 'skip':
             t = time.time()
             bodies_cog = ma.multi_bodies_cog(humans=humans)
             bodies_cog[np.isnan(bodies_cog[:, :, :])] = 0
-            humans_feature = np.concatenate((np_humans_current,
+            humans_feature = np.concatenate((track.humans_current,
                                              bodies_cog.reshape(bodies_cog.shape[0],
                                                                 bodies_cog.shape[1] * bodies_cog.shape[2])), axis=1)
             df_frame = pd.DataFrame(humans_feature.round(4))
@@ -149,8 +151,8 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
                 plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
 
             # plot trajectories r_wrist:4, l_wrist:7
-            for hum in np.sort(humans_id):
-                df_human = np_humans[np_humans[:, clm_of_id] == hum]
+            for hum in np.sort(track.humans_id):
+                df_human = track.humans_tracklet[track.humans_tracklet[:, track.clm_num] == hum]
                 plt.plot(df_human[:, 4 * 3 + 1] * w_pxl, df_human[:, 4 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
                 plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
 
