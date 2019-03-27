@@ -81,7 +81,6 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
 
     # processing video
     frame_no = 0
-    cmap = plt.get_cmap("tab10")
     track = TrackHumans(start_frame=start_frame)
     while cap.isOpened():
         ret_val, image = cap.read()
@@ -152,12 +151,10 @@ def estimate_trajectory(video, path='', resize='432x368', model='cmu', resize_ou
                 plt.vlines(bodies_cog[:, 7, 0] * w_pxl, ymin=0, ymax=h_pxl, linestyles='dashed')
 
             # plot trajectories r_wrist:4, l_wrist:7
-            for hum in range(max(track.humans_id)):
+            for hum in np.sort(track.humans_id):
                 df_human = track.humans_tracklet[track.humans_tracklet[:, track.clm_num] == hum]
-                plt.plot(df_human[:, 4 * 3 + 1] * w_pxl, df_human[:, 4 * 3 + 2] * h_pxl,
-                         linewidth=400/fig_resize, color=cmap(hum * 2))
-                plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl,
-                         linewidth=400/fig_resize, color=cmap(hum * 2 + 1))
+                plt.plot(df_human[:, 4 * 3 + 1] * w_pxl, df_human[:, 4 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
+                plt.plot(df_human[:, 7 * 3 + 1] * w_pxl, df_human[:, 7 * 3 + 2] * h_pxl, linewidth=400/fig_resize)
 
             plt.ylim(h_pxl, 0)
 
